@@ -164,21 +164,31 @@ class RNN_layers(nn.Module):
         return out
 
 class Masker(nn.Module):
-    def __init__(self, num_types, n_events, n_hidden=32, n_mask=4):
+    def __init__(self, num_types, n_events, n_hidden=256, n_mask=4):
         super(Masker, self).__init__()
-        self.fc1 = nn.Linear(n_events * 2, n_hidden)
-        self.fc2 = nn.Linear(n_hidden, n_mask)
+        # self.fc1 = nn.Linear(n_events * 2, n_hidden)
+        self.fc1 = nn.Linear(32, n_hidden)
+        self.fc2 = nn.Linear(n_hidden, num_types * num_types)
 
-    def forward(self, event_type, event_time):
-        # print(event_type)
-        # print(event_time)
-        x = torch.cat((event_time, event_type), 1)
-        # print(x.shape)
-        # print(x)
-        z = F.softmax(self.fc2(F.sigmoid(self.fc1(x)))) * 10
+    def forward(self, x, event_type, event_time):
+        # x = torch.normal(15, 3, size=(1, 64))  # noise
+        # x = torch.cat((event_time, event_type), 1)
+        z = self.fc2(F.relu(self.fc1(x)))
+        # m = nn.Dropout(p=0.5)  # sparse
+        # z = m(z)
+        z = abs(z)
         return z
 
-def frange_cycle_linear(start, stop, n_epoch=100, n_cycle=4, ratio=0.5):
+    # def __init__(self, num_types, n_events, n_hidden=100, n_mask=4):
+    #     super(Masker, self).__init__()
+    #     self.fc1 = nn.Linear(16 * n_events, n_hidden)
+    #     self.fc2 = nn.Linear(n_hidden, num_types * num_types)
+    #
+    # def forward(self, x):
+    #     z = self.fc2(F.relu(self.fc1(x)))
+    #     return z
+
+def frange_cycle_linear(start, stop, n_epoch=200, n_cycle=4, ratio=0.5):
     L = np.ones(n_epoch)
     period = n_epoch/n_cycle
     step = (stop-start)/(period*ratio) # linear schedule
@@ -200,7 +210,7 @@ class Transformer(nn.Module):
             n_layers=1, n_head=4, d_k=4, d_v=4, dropout=0.1):
         super().__init__()
 
-        # self.masker = Masker(num_types = num_types, n_events=num_events)
+        self.masker = Masker(num_types = num_types, n_events=num_events)
         # print(self.masker)
 
         # self.mask_latent = nn.Parameter(torch.rand(num_events, num_events), requires_grad=True)
@@ -209,14 +219,14 @@ class Transformer(nn.Module):
 
         # self.delay_score = nn.Parameter(torch.tensor(1.0), requires_grad=True)
 
-        delay_init = torch.Tensor([[10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
-                                   [10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
-                                   [0.0, 0.0, 10.0, 10.0, 0.0, 0.0],
-                                   [0.0, 0.0, 10.0, 10.0, 0.0, 0.0],
-                                   [0.0, 0.0, 0.0, 0.0, 10.0, 10.0],
-                                   [0.0, 0.0, 0.0, 0.0, 10.0, 10.0]])
-        self.delta_matrix = nn.Parameter(delay_init)
-        # self.delta_matrix = nn.Parameter(torch.Tensor(num_types, num_types).uniform_(10, 10))
+        # delay_init = torch.Tensor([[10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
+        #                            [10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
+        #                            [0.0, 0.0, 10.0, 10.0, 0.0, 0.0],
+        #                            [0.0, 0.0, 10.0, 10.0, 0.0, 0.0],
+        #                            [0.0, 0.0, 0.0, 0.0, 10.0, 10.0],
+        #                            [0.0, 0.0, 0.0, 0.0, 10.0, 10.0]])
+        # self.delta_matrix = nn.Parameter(delay_init)
+        self.delta_matrix = nn.Parameter(torch.Tensor(num_types, num_types).uniform_(10, 10))
 
 
         self.encoder = Encoder(
@@ -287,10 +297,6 @@ class Transformer(nn.Module):
         """
         non_pad_mask = get_non_pad_mask(event_type)
 
-        # for one sequence
-        self.num_events = len(event_type[0])
-        new_mask = torch.ones(self.num_events, self.num_events)
-
         # np.savetxt('log_64_time.txt', event_time[0].detach().numpy(), fmt='%.4f')
         # np.savetxt('log_64_type.txt', (event_type[0]-1).detach().numpy(), fmt='%.4f')
 
@@ -313,47 +319,100 @@ class Transformer(nn.Module):
         #             k = cur_t - delay - neighbor_history
         #             print(k)
 
-        for i in range(self.num_events):
-            for j in range(self.num_events):
-                delay_i = int((event_type[0] - 1)[i].item())
-                delay_j = int((event_type[0] - 1)[j].item())
-
-                delay = self.delta_matrix[delay_i][delay_j]
-                new_mask[i][j] = (event_time[0])[i] - ((event_time[0])[j] + delay)
-
-        # with open('data/toy/5dim_20000seq_row_sparse/mask.txt', 'a') as f:
-        #     for line in new_mask.detach().numpy():
-        #         f.write("".join(str(line)) + "\n")
-        #     f.write("\n")
-        # print("original mask", new_mask.detach().numpy())
-
-        new_mask = torch.sigmoid(10 * self.sig_temp[batch_i % 100] * new_mask)
-
-        # with open('data/toy/5dim_20000seq_row_sparse/mask_sigmoid.txt', 'a') as f:
-        #     for line in new_mask.detach().numpy():
-        #         f.write("".join(str(line)) + "\n")
-        #     f.write("\n")
-        # print(new_mask)
-
-        # new_mask = torch.relu(1000 * new_mask)
-        # new_mask = F.relu(1000 * new_mask)
-        # print(new_mask)
-
         # tem_enc = self.temporal_enc(event_time, non_pad_mask)
         # enc_output = self.event_emb(event_type)
-        # print(tem_enc.shape)
-        # print(enc_output.shape)
-
         # x = enc_output + tem_enc
-        # print(x.shape)
-        # print(x)
+        # delta_matrix_1d = self.masker(x.flatten()).detach()
+        # np.random.seed(epoch)
 
-        # x = torch.matmul(self.mask, x)
-        # print(x.shape)
-        # print(self.mask)
+        delta_matrix_1d = torch.zeros(self.num_types, self.num_types)
+        self.num_events = len(event_type[0])
+        batch_size = len(event_type)
+        new_mask = torch.ones(self.num_events, self.num_events)
+        new_mask = new_mask.repeat(batch_size,1)
+        new_mask = new_mask.view(batch_size, self.num_events, self.num_events)
+        if 25 < epoch <= 50 or 75 < epoch <= 100:
+            x = torch.normal(10, 1, size=(1, 32))  # noise
+            delta_matrix_1d = self.masker(x, event_type, event_time)
+            # delta_matrix_1d = self.masker(event_type, event_time).detach()
+            # delta_matrix_hyper = delta_matrix_1d.reshape([self.num_types, self.num_types])
+            # sparse_pattern = torch.tensor([1, 0, 0, 0, 1, 0, 0, 1, 0])
+            # delta_matrix_1d = delta_matrix_1d * sparse_pattern
 
-        # enc_output = self.encoder(event_type, event_time, non_pad_mask)
-        # enc_output = self.encoder(x, non_pad_mask, event_type, new_mask, epoch)
+            for k in range(batch_size):
+                for i in range(self.num_events):
+                    for j in range(self.num_events):
+                        delay_i = int((event_type[k] - 1)[i].item())
+                        delay_j = int((event_type[k] - 1)[j].item())
+
+                        # delay = self.delta_matrix[delay_i][delay_j]
+                        delay = delta_matrix_1d[0][delay_i * self.num_types + delay_j]
+                        new_mask[k][i][j] = (event_time[k])[i] - ((event_time[k])[j] + delay)
+
+            # with open('data/toy/3dim_2000seq_32ev/mask.txt', 'a') as f:
+            #     for line in new_mask.detach().numpy():
+            #         f.write("".join(str(line)) + "\n")
+            #     f.write("\n")
+            # print("original mask", new_mask.detach().numpy())
+
+            new_mask = torch.sigmoid(10 * self.sig_temp[epoch % 100] * new_mask)
+
+            # ---  tensor
+            # x = torch.normal(10, 1, size=(1, 64))  # noise
+            # delta_matrix_1d = self.masker(x, event_type, event_time).detach()
+            # delta_matrix_hyper = delta_matrix_1d.reshape([self.num_types, self.num_types])
+            # print(delta_matrix_hyper)
+            #
+            # event_type_0 = (event_type[0] - 1)
+            # event_time_0 = event_time[0]
+            # print(event_type_0)
+            # print(event_time_0)
+            #
+            # # Compute delay for all pairs of events using broadcasting
+            # delay_i = (event_type_0.unsqueeze(1)).unsqueeze(2).expand(-1, self.num_events, self.num_events)
+            # delay_j = (event_type_0.unsqueeze(0)).unsqueeze(2).expand(self.num_events, -1, self.num_events)
+            #
+            # print(delay_i)
+            # print(delay_j)
+            # delay = delta_matrix_hyper[delay_i, delay_j]
+            # print(delay)
+            #
+            # # Compute time differences using broadcasting
+            # event_time_i = event_time_0.unsqueeze(0).unsqueeze(2).expand(self.num_events, self.num_events, -1)
+            # event_time_j = event_time_0.unsqueeze(1).unsqueeze(0).expand(self.num_events, -1, -1)
+            #
+            # time_difference = event_time_i - (event_time_j + delay)
+            # print(time_difference)
+            # new_mask = torch.sigmoid(10 * self.sig_temp[batch_i % 100] * time_difference)
+            # print(new_mask.size)
+            # --- end
+
+
+            # with open('data/toy/3dim_2000seq_32ev/mask_sigmoid.txt', 'a') as f:
+            #     for line in new_mask.detach().numpy():
+            #         f.write("".join(str(line)) + "\n")
+            #     f.write("\n")
+            # print(new_mask)
+
+            # new_mask = torch.relu(1000 * new_mask)
+            # new_mask = F.relu(1000 * new_mask)
+            # print(new_mask)
+
+            # tem_enc = self.temporal_enc(event_time, non_pad_mask)
+            # enc_output = self.event_emb(event_type)
+            # print(tem_enc.shape)
+            # print(enc_output.shape)
+
+            # x = enc_output + tem_enc
+            # print(x.shape)
+            # print(x)
+
+            # x = torch.matmul(self.mask, x)
+            # print(x.shape)
+            # print(self.mask)
+
+            # enc_output = self.encoder(event_type, event_time, non_pad_mask)
+            # enc_output = self.encoder(x, non_pad_mask, event_type, new_mask, epoch)
 
         enc_output = self.encoder(event_type, event_time, non_pad_mask, new_mask, epoch)
         enc_output = self.rnn(enc_output, non_pad_mask)
@@ -363,4 +422,5 @@ class Transformer(nn.Module):
         type_prediction = self.type_predictor(enc_output, non_pad_mask)
         self.delta_matrix.data.clamp_(min=0)
 
-        return enc_output, (type_prediction, time_prediction), self.delta_matrix
+        return enc_output, (type_prediction, time_prediction), delta_matrix_1d
+        # return enc_output, (type_prediction, time_prediction), self.delta_matrix

@@ -1,0 +1,2 @@
+Namespace(batch_size=8, d_inner_hid=64, d_k=16, d_model=16, d_rnn=8, d_v=16, data='data/toy/3dim_2000seq_32ev/', device=device(type='cpu'), dropout=0.1, epoch=400, log='data/toy/3dim_2000seq_32ev/epoch400.txt', lr=0.001, lr_delay=0.01, n_head=4, n_layers=1, num_events=32, smooth=0.1)
+Epoch, Log-likelihood, Accuracy, RMSE

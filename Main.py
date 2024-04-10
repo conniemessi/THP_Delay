@@ -26,12 +26,10 @@ def prepare_dataloader(opt):
 
     print('[Info] Loading train data...')
     train_data, num_types = load_data(opt.data + 'train_new.pkl', 'train')
-    train_data = train_data[:30]  # to check the running is correct
     print('[Info] Loading dev data...')
     dev_data, _ = load_data(opt.data + 'dev_new.pkl', 'dev')
     print('[Info] Loading test data...')
     test_data, _ = load_data(opt.data + 'test_new.pkl', 'test')
-    test_data = test_data[:30]
 
     trainloader = get_dataloader(train_data, opt.batch_size, shuffle=True)
     testloader = get_dataloader(test_data, opt.batch_size, shuffle=False)
@@ -50,6 +48,8 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
     total_num_event = 0  # number of total events
     total_num_pred = 0  # number of predictions
     batch_i = 0
+    total_grad_delay = 0
+    total_grad_other = 0
     for batch in tqdm(training_data, mininterval=2,
                       desc='  - (Training)   ', leave=False):
         batch_i += 1
@@ -58,11 +58,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         event_type = event_type - 1  # when event starts from 1
 
         # """ forward """
-        if epoch % 5 == 0:
-            optimizer.zero_grad()
-        else:
-            optimizer2.zero_grad()
-        # optimizer.zero_grad()
+        # if epoch % 2 == 0:
+        #     optimizer.zero_grad()
+        # else:
+        #     optimizer2.zero_grad()
+        optimizer.zero_grad()
 
         enc_out, prediction, delta_matrix = model(event_type, event_time, epoch, batch_i)
 
@@ -102,28 +102,31 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #     l2_loss += torch.square(rows_norm)
         # l2_loss = torch.sqrt(l2_loss)
 
-        # gradient norm
-        grad_norm_delay = 0
-        grad_norm_other = 0
-        for name, parms in model.named_parameters():
-            if parms.grad is not None:
-                if "delta_matrix" in name:
-                    delta_matrix_grad = parms.grad.detach()
-                    for g in delta_matrix_grad:
-                        grad_norm_delay += torch.sum(torch.square(g))
-                else:
-                    grad = parms.grad.detach()
-                    for g in grad:
-                        grad_norm_other += torch.sum(torch.square(g))
 
-        # print("grad_norm_other", grad_norm_other)
-        # print("grad_norm_delay", grad_norm_delay)
+        # gradient norm
+        # grad_norm_delay = 0
+        # grad_norm_other = 0
+        # for name, param in model.named_parameters():
+        #     # if "masker" in name:
+        #     #     print(name, param, param.grad)
+        #     if param.grad is not None:
+        #         if "masker" in name:
+        #             grad_norm_delay += param.grad.data.norm(2).item() ** 2
+        #         else:
+        #             grad_norm_other += param.grad.data.norm(2).item() ** 2
+        # grad_norm_delay = grad_norm_delay ** 0.5
+        # grad_norm_other = grad_norm_other ** 0.5
+
         # SE is usually large, scale it to stabilize training
         scale_time_loss = 100
-        weight_decay = 0.0001
-        weight_decay_delay = 10
-        loss = weight_decay * grad_norm_other + pred_loss + se / scale_time_loss + weight_decay_delay * grad_norm_delay
-        # loss = event_loss + pred_loss + se / scale_time_loss  # original
+        weight_decay = 0.001
+        weight_decay_delay = 0.01
+        lambda1 = 0.1
+        all_linear1_params = torch.cat([x.view(-1) for x in model.masker.fc2.parameters()])
+        l1_regularization = lambda1 * torch.norm(all_linear1_params, 1)  # l1 norm
+        # loss = weight_decay * grad_norm_other + pred_loss + se / scale_time_loss + weight_decay_delay * grad_norm_delay
+        loss = event_loss + pred_loss + se / scale_time_loss  # original
+        # loss = event_loss + pred_loss + se / scale_time_loss + l1_regularization  # original
         loss.backward()
 
         # torch.autograd.set_detect_anomaly(True)
@@ -132,47 +135,62 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
 
         """ update parameters """
 
-        if batch_i <= 10:
-            for name, parms in model.named_parameters():
-                if parms.grad is not None:
-                    if "delta_matrix" in name:
-                        parms.grad[:, 2:] = torch.zeros_like(parms.grad[:,2:])
-                        parms.grad[2:, 0:2] = torch.zeros_like(parms.grad[2:, 0:2])
+        # if batch_i <= 10:
+        #     for name, parms in model.named_parameters():
+        #         if parms.grad is not None:
+        #             if "delta_matrix" in name:
+        #                 parms.grad[:, 2:] = torch.zeros_like(parms.grad[:,2:])
+        #                 parms.grad[2:, 0:2] = torch.zeros_like(parms.grad[2:, 0:2])
+        #
+        # if 10 < batch_i <= 20:
+        #     for name, parms in model.named_parameters():
+        #         if parms.grad is not None:
+        #             if "delta_matrix" in name:
+        #                 parms.grad[:, 0:2] = torch.zeros_like(parms.grad[:,0:2])
+        #                 parms.grad[:, 4:] = torch.zeros_like(parms.grad[:,4:])
+        #                 parms.grad[0:1, 2:4] = torch.zeros_like(parms.grad[0:1, 2:4])
+        #                 parms.grad[4:, 2:4] = torch.zeros_like(parms.grad[4:, 2:4])
+        #
+        # if batch_i > 20:
+        #     for name, parms in model.named_parameters():
+        #         if parms.grad is not None:
+        #             if "delta_matrix" in name:
+        #                 parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
+        #                 parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
 
-        if 10 < batch_i <= 20:
-            for name, parms in model.named_parameters():
-                if parms.grad is not None:
-                    if "delta_matrix" in name:
-                        parms.grad[:, 0:2] = torch.zeros_like(parms.grad[:,0:2])
-                        parms.grad[:, 4:] = torch.zeros_like(parms.grad[:,4:])
-                        parms.grad[0:1, 2:4] = torch.zeros_like(parms.grad[0:1, 2:4])
-                        parms.grad[4:, 2:4] = torch.zeros_like(parms.grad[4:, 2:4])
+        # if epoch % 2 == 0:
+        #     optimizer.step()
+        # else:
+        #     optimizer2.step()
+        optimizer.step()
 
-        if batch_i > 20:
-            for name, parms in model.named_parameters():
-                if parms.grad is not None:
-                    if "delta_matrix" in name:
-                        parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
-                        parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
+        # gradient norm
+        grad_norm_delay = 0
+        grad_norm_other = 0
+        for name, param in model.named_parameters():
+            # if "masker" in name:
+            #     print(name, param, param.grad)
+            if param.grad is not None:
+                if "masker" in name:
+                    grad_norm_delay += param.grad.data.norm(2).item() ** 2
+                else:
+                    grad_norm_other += param.grad.data.norm(2).item() ** 2
+        grad_norm_delay = grad_norm_delay ** 0.5
+        grad_norm_other = grad_norm_other ** 0.5
+        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        print(grad_norm_delay, grad_norm_other, grad_norm)
 
-        if epoch % 5 == 0:
-            optimizer.step()
-        else:
-            optimizer2.step()
-        # optimizer.step()
-
-
-        for name, parms in model.named_parameters():
-            if "delta_matrix" in name:
-                delta_matrix_grad = np.round(parms.grad.detach().numpy(), 3)
-        delta_matrix_np = np.round(delta_matrix.detach().numpy(), 3)
-        with open(opt.log, 'a') as f:
-            f.write("delay:" + "\n")
-            for line in delta_matrix_np:
-                f.write("".join(str(line)) + "\n")
-            f.write("gradient:" + "\n")
-            for line in delta_matrix_grad:
-                f.write("".join(str(line)) + "\n")
+        # for name, parms in model.named_parameters():
+        #     if "delta_matrix" in name:
+        #         delta_matrix_grad = np.round(parms.grad.detach().numpy(), 3)
+        # delta_matrix_np = np.round(delta_matrix.detach().numpy(), 3)
+        # with open(opt.log, 'a') as f:
+        #     f.write("delay:" + "\n")
+        #     for line in delta_matrix_np:
+        #         f.write("".join(str(line)) + "\n")
+        #     f.write("gradient:" + "\n")
+        #     for line in delta_matrix_grad:
+        #         f.write("".join(str(line)) + "\n")
 
 
         """ note keeping """
@@ -183,8 +201,13 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         # we do not predict the first event
         total_num_pred += event_type.ne(Constants.PAD).sum().item() - event_time.shape[0]
 
+        total_grad_delay += grad_norm_delay
+        total_grad_other += grad_norm_other
+
     rmse = np.sqrt(total_time_se / total_num_pred)
-    return total_event_ll / total_num_event, total_event_rate / total_num_pred, rmse, delta_matrix
+    print(batch_i)
+    return (total_event_ll / total_num_event, total_event_rate / total_num_pred, rmse, delta_matrix,
+            total_grad_delay / batch_i, total_grad_other / batch_i)
 
 
 def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
@@ -197,6 +220,8 @@ def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
     total_event_rate = 0  # cumulative number of correct prediction
     total_num_event = 0  # number of total events
     total_num_pred = 0  # number of predictions
+    # total_grad_delay = 0
+    # total_grad_other = 0
     with torch.no_grad():
         for batch in tqdm(validation_data, mininterval=2,
                           desc='  - (Validation) ', leave=False):
@@ -213,15 +238,30 @@ def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
             se = Utils.time_loss(prediction[1], event_time)
 
             """ note keeping """
+            # gradient norm
+            grad_norm_delay = 0
+            grad_norm_other = 0
+            for name, param in model.named_parameters():
+                if param.grad is not None:
+                    if "masker" in name:
+                        grad_norm_delay += param.grad.data.norm(2).item() ** 2
+                    else:
+                        grad_norm_other += param.grad.data.norm(2).item() ** 2
+            # grad_norm_delay = grad_norm_delay ** 0.5
+            # grad_norm_other = grad_norm_other ** 0.5
+            # grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            # print(grad_norm_delay, grad_norm_other, grad_norm)
+
             total_event_ll += -event_loss.item()
             total_time_se += se.item()
             total_event_rate += pred_num.item()
             total_num_event += event_type.ne(Constants.PAD).sum().item()
             total_num_pred += event_type.ne(Constants.PAD).sum().item() - event_time.shape[0]
+            # total_grad_delay += grad_norm_delay
+            # total_grad_other += grad_norm_other
 
     rmse = np.sqrt(total_time_se / total_num_pred)
     return total_event_ll / total_num_event, total_event_rate / total_num_pred, rmse
-
 
 def train(model, training_data, validation_data, optimizer, optimizer2, scheduler, scheduler2, pred_loss_func, opt,
           other_params, paras):
@@ -235,20 +275,22 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
         print('[ Epoch', epoch, ']')
 
         start = time.time()
-        train_event, train_type, train_time, delta_matrix = train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt, epoch,
+        train_event, train_type, train_time, delta_matrix, train_delay, train_other = train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt, epoch,
                                                                         other_params, paras)
         print('  - (Training)    loglikelihood: {ll: 8.5f}, '
               'accuracy: {type: 8.5f}, RMSE: {rmse: 8.5f}, '
-              'elapse: {elapse:3.3f} min'
+              'elapse: {elapse:3.3f} min, '
               .format(ll=train_event, type=train_type, rmse=train_time, elapse=(time.time() - start) / 60))
         delta_matrix_np = np.round(delta_matrix.detach().numpy(), 3)
-        print(delta_matrix_np)
+        print("delta_matrix in Main train: \n", delta_matrix_np)
 
-        for name, parms in model.named_parameters():
-            if "delta_matrix" in name:
-                print('-->name:', name, '-->grad_requirs:', parms.requires_grad, \
-                      ' -->grad_value:', parms.grad)
-                delta_matrix_grad = np.round(parms.grad.detach().numpy(), 3)
+        # for name, parms in model.named_parameters():
+        #     if "masker" in name:
+        #         print('-->name:', name, '-->grad_requirs:', parms.requires_grad, \
+        #               ' -->grad_value:', parms.grad)
+        #         delta_matrix_grad = np.round(parms.grad.detach().numpy(), 3)
+        print("train delay: ", train_delay)
+        print("train other: ", train_other)
 
         start = time.time()
         valid_event, valid_type, valid_time = eval_epoch(model, validation_data, pred_loss_func, opt, epoch)
@@ -267,22 +309,22 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
 
         # logging
         with open(opt.log, 'a') as f:
-            f.write('{epoch}, {ll: 8.5f}, {acc: 8.5f}, {rmse: 8.5f}\n'
-                    .format(epoch=epoch, ll=valid_event, acc=valid_type, rmse=valid_time))
+            f.write('{epoch}, {ll: 8.5f}, {acc: 8.5f}, {rmse: 8.5f}, {train_ll: 8.5f}, {train_delay: 8.5f}, {train_other: 8.5f}\n'
+                    .format(epoch=epoch, ll=valid_event, acc=valid_type, train_ll=train_event, rmse=valid_time, train_delay=train_delay, train_other=train_other))
             f.write("delay:" + "\n")
             for line in delta_matrix_np:
                 f.write("".join(str(line)) + "\n")
-            f.write("gradient:" + "\n")
-            for line in delta_matrix_grad:
-                f.write("".join(str(line)) + "\n")
+            # f.write("gradient:" + "\n")
+            # for line in delta_matrix_grad:
+            #     f.write("".join(str(line)) + "\n")
 
-        # scheduler.step()
+        scheduler.step()
         # scheduler2.step()
 
-        if epoch % 5 == 0:
-            scheduler.step()
-        else:
-            scheduler2.step()
+        # if epoch % 2 == 0:
+        #     scheduler.step()
+        # else:
+        #     scheduler2.step()
 
 
         # print("saving model")
@@ -326,7 +368,7 @@ def main():
     with open(opt.log, 'w') as f:
         f.write(format(opt))
         f.write('\n')
-        f.write('Epoch, Log-likelihood, Accuracy, RMSE\n')
+        f.write('Epoch, Log-likelihood, Accuracy, RMSE, Gradient_Masker, Gradient_THP\n')
 
     print('[Info] parameters: {}'.format(opt))
 
@@ -349,33 +391,33 @@ def main():
     model.to(opt.device)
 
     """ optimizer and scheduler """
-    # print(model)
+    print(model)
     paras = []
     for name, p in model.named_parameters():
-        if "delta_matrix" in name:
+        # if "delta_matrix" in name:
+        if "masker" in name:
             p.requires_grad = True
             paras.append(p)
-            break
+
     optimizer2 = optim.Adam(paras, opt.lr_delay, betas=(0.9, 0.999), eps=1e-05)
     scheduler2 = optim.lr_scheduler.StepLR(optimizer2, 10, gamma=0.5)
 
     all_params = model.parameters()
     params_id = list(map(id, paras))
     other_params = list(filter(lambda p: p.requires_grad and id(p) not in params_id, all_params))
+    optimizer = optim.Adam([
+        {'params': other_params},
+        {'params': paras, 'lr': opt.lr_delay}],
+        opt.lr, betas=(0.9, 0.999), eps=1e-05
+    )
+
+    # no delay
     # optimizer = optim.Adam([
-    #     {'params': other_params},
-    #     {'params': paras, 'lr': opt.lr_delay}],
+    #     {'params': other_params}],
     #     opt.lr, betas=(0.9, 0.999), eps=1e-05
     # )
 
-    # no delay
-    optimizer = optim.Adam([
-        {'params': other_params}],
-        opt.lr, betas=(0.9, 0.999), eps=1e-05
-    )
-    # print(other_params)
-    print(paras)
-
+    # original
     # optimizer = optim.Adam(filter(lambda x: x.requires_grad, model.parameters()),
     #                        opt.lr, betas=(0.9, 0.999), eps=1e-05)
 
