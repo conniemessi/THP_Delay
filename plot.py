@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # Read data from file
-filename = 'data/toy/5dim_20000seq_32ev_row/100_25.txt'
+filename = 'data/toy/3dim_2000seq_32ev/100_25_tensor.txt'
 epoch = []
 log_likelihood = []
 accuracy = []

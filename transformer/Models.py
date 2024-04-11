@@ -163,6 +163,7 @@ class RNN_layers(nn.Module):
         out = self.projection(out)
         return out
 
+
 class Masker(nn.Module):
     def __init__(self, num_types, n_events, n_hidden=256, n_mask=4):
         super(Masker, self).__init__()
@@ -188,18 +189,20 @@ class Masker(nn.Module):
     #     z = self.fc2(F.relu(self.fc1(x)))
     #     return z
 
+
 def frange_cycle_linear(start, stop, n_epoch=200, n_cycle=4, ratio=0.5):
     L = np.ones(n_epoch)
-    period = n_epoch/n_cycle
-    step = (stop-start)/(period*ratio) # linear schedule
+    period = n_epoch / n_cycle
+    step = (stop - start) / (period * ratio)  # linear schedule
 
     for c in range(n_cycle):
         v, i = start, 0
-        while v <= stop and (int(i+c*period) < n_epoch):
-            L[int(i+c*period)] = v
+        while v <= stop and (int(i + c * period) < n_epoch):
+            L[int(i + c * period)] = v
             v += step
             i += 1
     return L
+
 
 class Transformer(nn.Module):
     """ A sequence to sequence model with attention mechanism. """
@@ -210,8 +213,7 @@ class Transformer(nn.Module):
             n_layers=1, n_head=4, d_k=4, d_v=4, dropout=0.1):
         super().__init__()
 
-        self.masker = Masker(num_types = num_types, n_events=num_events)
-        # print(self.masker)
+        self.masker = Masker(num_types=num_types, n_events=num_events)
 
         # self.mask_latent = nn.Parameter(torch.rand(num_events, num_events), requires_grad=True)
         # self.mask = torch.triu(
@@ -227,7 +229,6 @@ class Transformer(nn.Module):
         #                            [0.0, 0.0, 0.0, 0.0, 10.0, 10.0]])
         # self.delta_matrix = nn.Parameter(delay_init)
         self.delta_matrix = nn.Parameter(torch.Tensor(num_types, num_types).uniform_(10, 10))
-
 
         self.encoder = Encoder(
             num_types=num_types,
@@ -297,28 +298,6 @@ class Transformer(nn.Module):
         """
         non_pad_mask = get_non_pad_mask(event_type)
 
-        # np.savetxt('log_64_time.txt', event_time[0].detach().numpy(), fmt='%.4f')
-        # np.savetxt('log_64_type.txt', (event_type[0]-1).detach().numpy(), fmt='%.4f')
-
-        # data = {}
-        # for i in range(self.num_types):
-        #     data[i] = event_time[0][np.where(event_type[0] == i + 1)]
-        # print(data)
-        #
-        # delay_effect = {}
-        # for i in range(self.num_types):
-        #     # recording of an event in a certain dimension has a delay effect on the intensity variations of other dimensions
-        #     delay_effect[i] = torch.unsqueeze(self.delta_matrix[:, i], dim=1).repeat(1, len(data[i]))
-        # print(delay_effect)
-        #
-        # for dim_idx in range(self.num_types):
-        #     for _, cur_t in enumerate(data[dim_idx]):
-        #         for neighbor_idx in range(self.num_types):
-        #             neighbor_history = torch.Tensor(data[neighbor_idx])
-        #             delay = delay_effect[neighbor_idx][dim_idx, : ]
-        #             k = cur_t - delay - neighbor_history
-        #             print(k)
-
         # tem_enc = self.temporal_enc(event_time, non_pad_mask)
         # enc_output = self.event_emb(event_type)
         # x = enc_output + tem_enc
@@ -329,27 +308,35 @@ class Transformer(nn.Module):
         self.num_events = len(event_type[0])
         batch_size = len(event_type)
         new_mask = torch.ones(self.num_events, self.num_events)
-        new_mask = new_mask.repeat(batch_size,1)
-        new_mask = new_mask.view(batch_size, self.num_events, self.num_events)
+        new_mask = new_mask.repeat(batch_size, 1, 1)
         if 25 < epoch <= 50 or 75 < epoch <= 100:
-            x = torch.normal(10, 1, size=(1, 32))  # noise
+            # for k in range(batch_size):
+            #     x = torch.normal(10, 1, size=(1, 32))  # noise
+            #     delta_matrix_1d = self.masker(x, event_type, event_time)
+            #     # sparse_pattern = torch.tensor([1, 0, 0, 0, 1, 0, 0, 1, 0])
+            #     # delta_matrix_1d = delta_matrix_1d * sparse_pattern
+            #     for i in range(self.num_events):
+            #         for j in range(self.num_events):
+            #             delay_i = int((event_type[k] - 1)[i].item())
+            #             delay_j = int((event_type[k] - 1)[j].item())
+            #             # delay = self.delta_matrix[delay_i][delay_j]
+            #             delay = delta_matrix_1d[0][delay_i * self.num_types + delay_j]
+            #             new_mask[k][i][j] = (event_time[k])[i] - ((event_time[k])[j] + delay)
+
+            x = torch.normal(10, 1, size=(batch_size, 32))  # noise
             delta_matrix_1d = self.masker(x, event_type, event_time)
-            # delta_matrix_1d = self.masker(event_type, event_time).detach()
-            # delta_matrix_hyper = delta_matrix_1d.reshape([self.num_types, self.num_types])
-            # sparse_pattern = torch.tensor([1, 0, 0, 0, 1, 0, 0, 1, 0])
-            # delta_matrix_1d = delta_matrix_1d * sparse_pattern
 
-            for k in range(batch_size):
-                for i in range(self.num_events):
-                    for j in range(self.num_events):
-                        delay_i = int((event_type[k] - 1)[i].item())
-                        delay_j = int((event_type[k] - 1)[j].item())
+            delay_indices_i = (event_type - 1).view(batch_size, self.num_events, 1)
+            delay_indices_j = (event_type - 1).view(batch_size, 1, self.num_events)
+            delay_indices = delay_indices_i * self.num_types + delay_indices_j
+            delay_indices = delay_indices.view(batch_size, self.num_events * self.num_events)
+            delay = delta_matrix_1d.gather(1, delay_indices).view(batch_size, self.num_events, self.num_events)
 
-                        # delay = self.delta_matrix[delay_i][delay_j]
-                        delay = delta_matrix_1d[0][delay_i * self.num_types + delay_j]
-                        new_mask[k][i][j] = (event_time[k])[i] - ((event_time[k])[j] + delay)
+            event_time_repeated = event_time.unsqueeze(1).repeat(1, self.num_events, 1)
+            event_time_diff = event_time_repeated - event_time.unsqueeze(2)
+            new_mask = -(event_time_diff + delay)
 
-            # with open('data/toy/3dim_2000seq_32ev/mask.txt', 'a') as f:
+            # with open('data/toy/2dim_2seq_10ev/mask.txt', 'a') as f:
             #     for line in new_mask.detach().numpy():
             #         f.write("".join(str(line)) + "\n")
             #     f.write("\n")
@@ -357,38 +344,7 @@ class Transformer(nn.Module):
 
             new_mask = torch.sigmoid(10 * self.sig_temp[epoch % 100] * new_mask)
 
-            # ---  tensor
-            # x = torch.normal(10, 1, size=(1, 64))  # noise
-            # delta_matrix_1d = self.masker(x, event_type, event_time).detach()
-            # delta_matrix_hyper = delta_matrix_1d.reshape([self.num_types, self.num_types])
-            # print(delta_matrix_hyper)
-            #
-            # event_type_0 = (event_type[0] - 1)
-            # event_time_0 = event_time[0]
-            # print(event_type_0)
-            # print(event_time_0)
-            #
-            # # Compute delay for all pairs of events using broadcasting
-            # delay_i = (event_type_0.unsqueeze(1)).unsqueeze(2).expand(-1, self.num_events, self.num_events)
-            # delay_j = (event_type_0.unsqueeze(0)).unsqueeze(2).expand(self.num_events, -1, self.num_events)
-            #
-            # print(delay_i)
-            # print(delay_j)
-            # delay = delta_matrix_hyper[delay_i, delay_j]
-            # print(delay)
-            #
-            # # Compute time differences using broadcasting
-            # event_time_i = event_time_0.unsqueeze(0).unsqueeze(2).expand(self.num_events, self.num_events, -1)
-            # event_time_j = event_time_0.unsqueeze(1).unsqueeze(0).expand(self.num_events, -1, -1)
-            #
-            # time_difference = event_time_i - (event_time_j + delay)
-            # print(time_difference)
-            # new_mask = torch.sigmoid(10 * self.sig_temp[batch_i % 100] * time_difference)
-            # print(new_mask.size)
-            # --- end
-
-
-            # with open('data/toy/3dim_2000seq_32ev/mask_sigmoid.txt', 'a') as f:
+            # with open('data/toy/2dim_2seq_10ev/mask_sigmoid.txt', 'a') as f:
             #     for line in new_mask.detach().numpy():
             #         f.write("".join(str(line)) + "\n")
             #     f.write("\n")

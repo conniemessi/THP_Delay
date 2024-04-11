@@ -1,6 +1,6 @@
 device=0
-data=data/toy/5dim_20000seq_32ev_row/
-batch=16
+data=data/toy/3dim_20000seq_32ev/
+batch=32
 n_head=1
 n_layers=1
 d_model=16
@@ -12,7 +12,7 @@ dropout=0.1
 lr=0.001
 smooth=0.1
 epoch=100
-log=data/toy/5dim_20000seq_32ev_row/test.txt
+log=data/toy/3dim_20000seq_32ev/100_25.txt
 num_events=32
 lr_delay=0.01
 

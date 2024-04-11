@@ -58,11 +58,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         event_type = event_type - 1  # when event starts from 1
 
         # """ forward """
-        # if epoch % 2 == 0:
-        #     optimizer.zero_grad()
-        # else:
-        #     optimizer2.zero_grad()
-        optimizer.zero_grad()
+        if 0 < epoch <= 25 or 50 < epoch <= 75:
+            optimizer.zero_grad()
+        else:
+            optimizer2.zero_grad()
+        # optimizer.zero_grad()
 
         enc_out, prediction, delta_matrix = model(event_type, event_time, epoch, batch_i)
 
@@ -158,11 +158,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #                 parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
         #                 parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
 
-        # if epoch % 2 == 0:
-        #     optimizer.step()
-        # else:
-        #     optimizer2.step()
-        optimizer.step()
+        if 0 < epoch < 25 or 50 < epoch < 75:
+            optimizer.step()
+        else:
+            optimizer2.step()
+        # optimizer.step()
 
         # gradient norm
         grad_norm_delay = 0
@@ -177,8 +177,7 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
                     grad_norm_other += param.grad.data.norm(2).item() ** 2
         grad_norm_delay = grad_norm_delay ** 0.5
         grad_norm_other = grad_norm_other ** 0.5
-        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-        print(grad_norm_delay, grad_norm_other, grad_norm)
+        # grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
         # for name, parms in model.named_parameters():
         #     if "delta_matrix" in name:
@@ -318,13 +317,13 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
             # for line in delta_matrix_grad:
             #     f.write("".join(str(line)) + "\n")
 
-        scheduler.step()
+        # scheduler.step()
         # scheduler2.step()
 
-        # if epoch % 2 == 0:
-        #     scheduler.step()
-        # else:
-        #     scheduler2.step()
+        if 0 < epoch < 25 or 50 < epoch < 75:
+            scheduler.step()
+        else:
+            scheduler2.step()
 
 
         # print("saving model")
@@ -394,7 +393,6 @@ def main():
     print(model)
     paras = []
     for name, p in model.named_parameters():
-        # if "delta_matrix" in name:
         if "masker" in name:
             p.requires_grad = True
             paras.append(p)

@@ -5049,4 +5049,1401 @@ train other:  0.0
   File "/Users/conniemessi/opt/anaconda3/envs/RL/lib/python3.8/multiprocessing/util.py", line 452, in spawnv_passfds
     return _posixsubprocess.fork_exec(
 BlockingIOError: [Errno 35] Resource temporarily unavailable
-  - (Training)   :  73%|███████▎  | 82/113 [03:06<01:14,  2.40s/it]  - (Training)   :  42%|████▏     | 47/113 [01:55<02:39,  2.41s/it]  - (Training)   :  30%|██▉       | 185/625 [06:58<17:34,  2.40s/it]  - (Training)   :  73%|███████▎  | 83/113 [03:08<01:12,  2.42s/it]  - (Training)   :  42%|████▏     | 48/113 [01:58<02:40,  2.47s/it]  - (Training)   :  30%|██▉       | 186/625 [07:01<19:02,  2.60s/it]  - (Training)   :  74%|███████▍  | 84/113 [03:11<01:15,  2.60s/it]
+  - (Training)   :  73%|███████▎  | 82/113 [03:06<01:14,  2.40s/it]  - (Training)   :  42%|████▏     | 47/113 [01:55<02:39,  2.41s/it]  - (Training)   :  30%|██▉       | 185/625 [06:58<17:34,  2.40s/it]  - (Training)   :  73%|███████▎  | 83/113 [03:08<01:12,  2.42s/it]  - (Training)   :  42%|████▏     | 48/113 [01:58<02:40,  2.47s/it]  - (Training)   :  30%|██▉       | 186/625 [07:01<19:02,  2.60s/it]  - (Training)   :  74%|███████▍  | 84/113 [03:11<01:15,  2.60s/it][Info] parameters: Namespace(batch_size=16, d_inner_hid=64, d_k=16, d_model=16, d_rnn=8, d_v=16, data='data/toy/3dim_2000seq_32ev/', device=device(type='cpu'), dropout=0.1, epoch=100, log='data/toy/3dim_2000seq_32ev/100_25_tensor.txt', lr=0.001, lr_delay=0.01, n_head=1, n_layers=1, num_events=32, smooth=0.1)
+[Info] Loading train data...
+[Info] Loading dev data...
+[Info] Loading test data...
+Transformer(
+  (masker): Masker(
+    (fc1): Linear(in_features=32, out_features=256, bias=True)
+    (fc2): Linear(in_features=256, out_features=9, bias=True)
+  )
+  (encoder): Encoder(
+    (event_emb): Embedding(4, 16, padding_idx=0)
+    (layer_stack): ModuleList(
+      (0): EncoderLayer(
+        (slf_attn): MultiHeadAttention(
+          (w_qs): Linear(in_features=16, out_features=16, bias=False)
+          (w_ks): Linear(in_features=16, out_features=16, bias=False)
+          (w_vs): Linear(in_features=16, out_features=16, bias=False)
+          (fc): Linear(in_features=16, out_features=16, bias=True)
+          (attention): ScaledDotProductAttention(
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+          (layer_norm): LayerNorm((16,), eps=1e-06, elementwise_affine=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (pos_ffn): PositionwiseFeedForward(
+          (w_1): Linear(in_features=16, out_features=64, bias=True)
+          (w_2): Linear(in_features=64, out_features=16, bias=True)
+          (layer_norm): LayerNorm((16,), eps=1e-06, elementwise_affine=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+      )
+    )
+  )
+  (linear): Linear(in_features=16, out_features=3, bias=True)
+  (rnn): RNN_layers(
+    (rnn): LSTM(16, 8, batch_first=True)
+    (projection): Linear(in_features=8, out_features=16, bias=True)
+  )
+  (time_predictor): Predictor(
+    (linear): Linear(in_features=16, out_features=1, bias=False)
+  )
+  (type_predictor): Predictor(
+    (linear): Linear(in_features=16, out_features=3, bias=False)
+  )
+  (event_emb): Embedding(4, 16, padding_idx=0)
+)
+[Info] Number of parameters: 15223
+[ Epoch 1 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:19,  3.39s/it]                                                                  113
+  - (Training)    loglikelihood: -1.78166, accuracy:  0.62151, RMSE:  3.19785, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  246.80755390114555
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.77s/it]                                                                  - (Testing)     loglikelihood: -1.77361, accuracy:  0.67226, RMSE:  3.21533, elapse: 0.213 min
+  - [Info] Maximum ll: -1.77361, Maximum accuracy:  0.67226, Minimum RMSE:  3.21533
+[ Epoch 2 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:57,  3.20s/it]                                                                  113
+  - (Training)    loglikelihood: -1.71402, accuracy:  0.66108, RMSE:  2.92658, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  125.45278374383523
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.73s/it]                                                                  - (Testing)     loglikelihood: -1.71430, accuracy:  0.68290, RMSE:  3.04360, elapse: 0.213 min
+  - [Info] Maximum ll: -1.71430, Maximum accuracy:  0.68290, Minimum RMSE:  3.04360
+[ Epoch 3 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:03,  3.24s/it]                                                                  113
+  - (Training)    loglikelihood: -1.66355, accuracy:  0.66188, RMSE:  2.84928, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  125.59296865989977
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.67502, accuracy:  0.69484, RMSE:  3.01838, elapse: 0.197 min
+  - [Info] Maximum ll: -1.67502, Maximum accuracy:  0.69484, Minimum RMSE:  3.01838
+[ Epoch 4 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:56,  3.18s/it]                                                                  113
+  - (Training)    loglikelihood: -1.64266, accuracy:  0.66613, RMSE:  2.83283, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  123.68955864019559
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.76s/it]                                                                  - (Testing)     loglikelihood: -1.65682, accuracy:  0.69323, RMSE:  3.00312, elapse: 0.213 min
+  - [Info] Maximum ll: -1.65682, Maximum accuracy:  0.69484, Minimum RMSE:  3.00312
+[ Epoch 5 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:17,  3.37s/it]                                                                  113
+  - (Training)    loglikelihood: -1.62397, accuracy:  0.66690, RMSE:  2.81873, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  124.7316194466411
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.03s/it]                                                                  - (Testing)     loglikelihood: -1.63528, accuracy:  0.68806, RMSE:  2.99188, elapse: 0.201 min
+  - [Info] Maximum ll: -1.63528, Maximum accuracy:  0.69484, Minimum RMSE:  2.99188
+[ Epoch 6 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:09,  3.30s/it]                                                                  113
+  - (Training)    loglikelihood: -1.60100, accuracy:  0.67084, RMSE:  2.80560, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  163.45627769282513
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.10s/it]                                                                  - (Testing)     loglikelihood: -1.62840, accuracy:  0.68839, RMSE:  3.00843, elapse: 0.202 min
+  - [Info] Maximum ll: -1.62840, Maximum accuracy:  0.69484, Minimum RMSE:  2.99188
+[ Epoch 7 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:25,  3.44s/it]                                                                  113
+  - (Training)    loglikelihood: -1.57189, accuracy:  0.67045, RMSE:  2.79480, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  205.76332211841063
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.56997, accuracy:  0.68935, RMSE:  2.97158, elapse: 0.198 min
+  - [Info] Maximum ll: -1.56997, Maximum accuracy:  0.69484, Minimum RMSE:  2.97158
+[ Epoch 8 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:13,  3.33s/it]                                                                  113
+  - (Training)    loglikelihood: -1.53747, accuracy:  0.67111, RMSE:  2.78308, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  242.0268040210396
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:13,  2.25s/it]                                                                  - (Testing)     loglikelihood: -1.54171, accuracy:  0.69097, RMSE:  2.96095, elapse: 0.205 min
+  - [Info] Maximum ll: -1.54171, Maximum accuracy:  0.69484, Minimum RMSE:  2.96095
+[ Epoch 9 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:51,  3.14s/it]                                                                  113
+  - (Training)    loglikelihood: -1.50305, accuracy:  0.67190, RMSE:  2.77316, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  233.46216797801088
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.49980, accuracy:  0.69129, RMSE:  2.94642, elapse: 0.197 min
+  - [Info] Maximum ll: -1.49980, Maximum accuracy:  0.69484, Minimum RMSE:  2.94642
+[ Epoch 10 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:53,  3.15s/it]                                                                  113
+  - (Training)    loglikelihood: -1.46870, accuracy:  0.67323, RMSE:  2.76713, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  331.7415548690008
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.47080, accuracy:  0.68774, RMSE:  2.94066, elapse: 0.197 min
+  - [Info] Maximum ll: -1.47080, Maximum accuracy:  0.69484, Minimum RMSE:  2.94066
+[ Epoch 11 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:48,  3.11s/it]                                                                  113
+  - (Training)    loglikelihood: -1.44273, accuracy:  0.67289, RMSE:  2.76374, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  268.40667891036975
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.45004, accuracy:  0.69484, RMSE:  2.93681, elapse: 0.198 min
+  - [Info] Maximum ll: -1.45004, Maximum accuracy:  0.69484, Minimum RMSE:  2.93681
+[ Epoch 12 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:48,  3.11s/it]                                                                  113
+  - (Training)    loglikelihood: -1.42732, accuracy:  0.67461, RMSE:  2.76130, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  241.10276516394705
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.43572, accuracy:  0.69161, RMSE:  2.93457, elapse: 0.197 min
+  - [Info] Maximum ll: -1.43572, Maximum accuracy:  0.69484, Minimum RMSE:  2.93457
+[ Epoch 13 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<07:04,  3.79s/it]                                                                  113
+  - (Training)    loglikelihood: -1.41369, accuracy:  0.67629, RMSE:  2.75979, elapse: 0.254 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  292.7394677202012
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:17,  2.92s/it]                                                                  - (Testing)     loglikelihood: -1.42241, accuracy:  0.70032, RMSE:  2.93041, elapse: 0.216 min
+  - [Info] Maximum ll: -1.42241, Maximum accuracy:  0.70032, Minimum RMSE:  2.93041
+[ Epoch 14 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:05<09:45,  5.23s/it]                                                                  113
+  - (Training)    loglikelihood: -1.40162, accuracy:  0.67516, RMSE:  2.75787, elapse: 0.278 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  288.0911651923119
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.40655, accuracy:  0.69581, RMSE:  2.93056, elapse: 0.199 min
+  - [Info] Maximum ll: -1.40655, Maximum accuracy:  0.70032, Minimum RMSE:  2.93041
+[ Epoch 15 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:43,  3.07s/it]                                                                  113
+  - (Training)    loglikelihood: -1.38914, accuracy:  0.67602, RMSE:  2.75517, elapse: 0.241 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  325.54574199775203
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.39168, accuracy:  0.69935, RMSE:  2.92894, elapse: 0.197 min
+  - [Info] Maximum ll: -1.39168, Maximum accuracy:  0.70032, Minimum RMSE:  2.92894
+[ Epoch 16 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:43,  3.07s/it]                                                                  113
+  - (Training)    loglikelihood: -1.37549, accuracy:  0.67703, RMSE:  2.75318, elapse: 0.241 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  299.24776114655396
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.02s/it]                                                                  - (Testing)     loglikelihood: -1.38017, accuracy:  0.69935, RMSE:  2.92718, elapse: 0.201 min
+  - [Info] Maximum ll: -1.38017, Maximum accuracy:  0.70032, Minimum RMSE:  2.92718
+[ Epoch 17 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:50,  3.13s/it]                                                                  113
+  - (Training)    loglikelihood: -1.36449, accuracy:  0.67792, RMSE:  2.75076, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  345.15539617875277
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.37127, accuracy:  0.70226, RMSE:  2.92650, elapse: 0.197 min
+  - [Info] Maximum ll: -1.37127, Maximum accuracy:  0.70226, Minimum RMSE:  2.92650
+[ Epoch 18 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:54,  3.17s/it]                                                                  113
+  - (Training)    loglikelihood: -1.35285, accuracy:  0.67837, RMSE:  2.75001, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  300.20863101163934
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.35802, accuracy:  0.70226, RMSE:  2.92735, elapse: 0.198 min
+  - [Info] Maximum ll: -1.35802, Maximum accuracy:  0.70226, Minimum RMSE:  2.92650
+[ Epoch 19 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:51,  3.14s/it]                                                                  113
+  - (Training)    loglikelihood: -1.34288, accuracy:  0.67944, RMSE:  2.74967, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  311.3851759151447
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.34915, accuracy:  0.70161, RMSE:  2.92572, elapse: 0.197 min
+  - [Info] Maximum ll: -1.34915, Maximum accuracy:  0.70226, Minimum RMSE:  2.92572
+[ Epoch 20 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:00,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.33130, accuracy:  0.67916, RMSE:  2.74929, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  304.505373578528
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.33535, accuracy:  0.70290, RMSE:  2.92270, elapse: 0.199 min
+  - [Info] Maximum ll: -1.33535, Maximum accuracy:  0.70290, Minimum RMSE:  2.92270
+[ Epoch 21 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:06,  3.28s/it]                                                                  113
+  - (Training)    loglikelihood: -1.32256, accuracy:  0.67982, RMSE:  2.74940, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  295.4060179902257
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.15s/it]                                                                  - (Testing)     loglikelihood: -1.33141, accuracy:  0.70484, RMSE:  2.92412, elapse: 0.203 min
+  - [Info] Maximum ll: -1.33141, Maximum accuracy:  0.70484, Minimum RMSE:  2.92270
+[ Epoch 22 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:42,  3.59s/it]                                                                  113
+  - (Training)    loglikelihood: -1.31729, accuracy:  0.68023, RMSE:  2.74677, elapse: 0.251 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  300.6874354847449
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.08s/it]                                                                  - (Testing)     loglikelihood: -1.32441, accuracy:  0.70194, RMSE:  2.92226, elapse: 0.202 min
+  - [Info] Maximum ll: -1.32441, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 23 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:44,  3.07s/it]                                                                  113
+  - (Training)    loglikelihood: -1.31228, accuracy:  0.68005, RMSE:  2.74743, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  316.8367746724678
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.32208, accuracy:  0.70323, RMSE:  2.92268, elapse: 0.197 min
+  - [Info] Maximum ll: -1.32208, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 24 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:42,  3.06s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30677, accuracy:  0.68082, RMSE:  2.74675, elapse: 0.241 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  314.1666726826786
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31803, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31803, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 25 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:04<07:29,  4.01s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30354, accuracy:  0.67977, RMSE:  2.74568, elapse: 0.255 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  0.0
+train other:  311.906940516455
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.01s/it]                                                                  - (Testing)     loglikelihood: -1.31881, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.201 min
+  - [Info] Maximum ll: -1.31803, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 26 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:00,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.79716, accuracy:  0.65952, RMSE:  2.82219, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[78.135 38.275 11.503  3.362  1.578  2.004  2.255  5.482  5.423]
+ [79.813 39.224 11.33   3.403  1.591  1.802  2.389  5.556  5.495]
+ [77.801 38.545 11.376  3.19   1.253  2.005  2.22   5.359  5.255]
+ [77.879 38.125 10.851  3.445  1.365  2.063  2.362  5.438  5.317]
+ [80.761 39.522 11.217  3.706  1.719  1.954  2.52   6.017  5.833]
+ [78.36  38.438 11.502  3.393  1.646  1.901  2.259  5.646  5.396]
+ [77.671 38.61  11.131  3.33   1.346  1.754  2.045  5.54   5.239]
+ [78.129 38.499 11.192  3.507  1.722  1.807  2.276  5.389  5.386]]
+train delay:  615.5262469554589
+train other:  88856.01923983992
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31755, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 27 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:02,  3.24s/it]                                                                  113
+  - (Training)    loglikelihood: -1.86677, accuracy:  0.65805, RMSE:  2.82760, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[30.826 31.915 30.633  4.422  2.189  0.453  0.555  4.749  5.194]
+ [32.764 33.951 32.729  4.902  2.343  0.537  0.578  5.163  5.783]
+ [30.833 31.887 30.854  4.74   2.362  0.307  0.633  4.912  5.569]
+ [30.737 31.668 30.891  4.539  2.547  0.203  0.596  4.671  5.342]
+ [31.84  33.127 31.654  4.805  2.598  0.771  0.634  4.918  5.507]
+ [31.435 32.202 31.504  4.544  2.119  0.572  0.741  4.979  5.3  ]
+ [31.228 32.63  31.497  4.531  2.55   0.441  0.562  4.877  5.516]
+ [31.885 33.162 32.093  4.755  2.461  0.378  0.788  4.977  5.699]]
+train delay:  96.66933675042023
+train other:  285440.6413076777
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31770, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.199 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 28 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:08,  3.29s/it]                                                                  113
+  - (Training)    loglikelihood: -1.71330, accuracy:  0.66043, RMSE:  2.81479, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[9.149 0.021 2.697 0.503 0.552 0.191 2.137 2.022 1.214]
+ [9.164 0.054 2.682 0.503 0.524 0.196 2.157 2.06  1.174]
+ [9.222 0.081 2.707 0.508 0.499 0.202 2.159 2.076 1.176]
+ [9.657 0.08  2.869 0.536 0.482 0.221 2.219 2.151 1.254]
+ [9.06  0.154 2.689 0.505 0.407 0.212 2.084 2.046 1.146]
+ [9.723 0.08  2.875 0.539 0.501 0.22  2.249 2.173 1.255]
+ [8.906 0.101 2.592 0.489 0.495 0.191 2.11  2.026 1.114]
+ [9.356 0.045 2.732 0.513 0.547 0.198 2.207 2.102 1.199]]
+train delay:  620.8198213552582
+train other:  460600.0296374543
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:15,  2.51s/it]                                                                  - (Testing)     loglikelihood: -1.31775, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.209 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 29 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:04<08:02,  4.31s/it]                                                                  113
+  - (Training)    loglikelihood: -1.48220, accuracy:  0.67199, RMSE:  2.77567, elapse: 0.270 min, 
+delta_matrix in Main train: 
+ [[0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  133.17097470216336
+train other:  587338.988606647
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) : 100%|██████████| 7/7 [00:02<00:00,  3.50it/s]                                                                  - (Testing)     loglikelihood: -1.31824, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.200 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 30 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:28,  3.47s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30317, accuracy:  0.67987, RMSE:  2.74507, elapse: 0.250 min, 
+delta_matrix in Main train: 
+ [[0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.24  0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.033006022986356395
+train other:  592699.2384999571
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31800, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.199 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 31 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:49,  3.12s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30343, accuracy:  0.67977, RMSE:  2.74619, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.238 0.066 0.084 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.034452923301014106
+train other:  581942.886298397
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31817, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 32 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:58,  3.20s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30324, accuracy:  0.68056, RMSE:  2.74627, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.236 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.035695822895615036
+train other:  571177.6359396048
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.17s/it]                                                                  - (Testing)     loglikelihood: -1.31795, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.203 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 33 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:21,  3.41s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30299, accuracy:  0.68005, RMSE:  2.74661, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.03462463871217077
+train other:  562352.8411331001
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.72s/it]                                                                  - (Testing)     loglikelihood: -1.31848, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.213 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 34 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:50,  3.13s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30457, accuracy:  0.68127, RMSE:  2.74653, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.03292530259052607
+train other:  553222.1561748823
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31770, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.199 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 35 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:47,  3.10s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30231, accuracy:  0.68039, RMSE:  2.74466, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.23  0.066 0.085 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.0327546922245917
+train other:  545564.8476640608
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31823, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 36 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:00,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30306, accuracy:  0.67986, RMSE:  2.74668, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.031197887855415454
+train other:  537828.2458650554
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.01s/it]                                                                  - (Testing)     loglikelihood: -1.31814, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.201 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 37 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:50,  3.13s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30261, accuracy:  0.67964, RMSE:  2.74554, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.227 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02701862700863811
+train other:  530133.2253088631
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31837, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 38 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:42,  3.05s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30262, accuracy:  0.68072, RMSE:  2.74624, elapse: 0.241 min, 
+delta_matrix in Main train: 
+ [[0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02723185151429311
+train other:  522865.7471555751
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31812, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 39 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:56,  3.19s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30297, accuracy:  0.67875, RMSE:  2.74611, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.224 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02931728415774618
+train other:  516919.9075648396
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:14,  2.36s/it]                                                                  - (Testing)     loglikelihood: -1.31806, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.206 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 40 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:11,  3.32s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30419, accuracy:  0.68030, RMSE:  2.74722, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.223 0.066 0.086 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02903222067474594
+train other:  511769.43883582624
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31793, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 41 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:11,  3.31s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30462, accuracy:  0.68070, RMSE:  2.74625, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.221 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.027969961887044426
+train other:  506666.1390081687
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31792, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.199 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 42 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:47,  3.10s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30373, accuracy:  0.68097, RMSE:  2.74563, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.219 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02800883581485682
+train other:  502717.59459014435
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31853, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.200 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 43 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:48,  3.11s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30395, accuracy:  0.68086, RMSE:  2.74674, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.217 0.066 0.087 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.027733766550513683
+train other:  499114.75507954054
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31769, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 44 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:48,  3.12s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30302, accuracy:  0.68027, RMSE:  2.74615, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.215 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.026050412842903155
+train other:  496016.80017664476
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31800, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.198 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 45 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:10,  3.31s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30295, accuracy:  0.68032, RMSE:  2.74645, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.214 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02482736319866469
+train other:  494376.25376276823
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31830, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.198 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 46 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:58,  3.20s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30390, accuracy:  0.68034, RMSE:  2.74704, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.213 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02379694280714813
+train other:  492676.8377257571
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:13,  2.31s/it]                                                                  - (Testing)     loglikelihood: -1.31785, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.206 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 47 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:43,  3.06s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30350, accuracy:  0.68104, RMSE:  2.74540, elapse: 0.241 min, 
+delta_matrix in Main train: 
+ [[0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.212 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02603891987311921
+train other:  492218.86738804943
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.06s/it]                                                                  - (Testing)     loglikelihood: -1.31796, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.202 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 48 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:56,  3.18s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30345, accuracy:  0.67991, RMSE:  2.74581, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.211 0.066 0.088 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.02553498388140628
+train other:  492558.8620652483
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31832, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 49 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:53,  3.16s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30317, accuracy:  0.68013, RMSE:  2.74610, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.209 0.066 0.089 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.024932959217187172
+train other:  493663.48463784216
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31806, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.199 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 50 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:59,  3.21s/it]                                                                  113
+  - (Training)    loglikelihood: -1.31388, accuracy:  0.68000, RMSE:  2.75191, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.001 0.001 0.337 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  8.491870150387232
+train other:  495401.8054780463
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31850, accuracy:  0.70226, RMSE:  2.92250, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31755, Maximum accuracy:  0.70484, Minimum RMSE:  2.92226
+[ Epoch 51 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:50,  3.13s/it]                                                                  113
+  - (Training)    loglikelihood: -1.30174, accuracy:  0.67934, RMSE:  2.74544, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  333.289137854549
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.31378, accuracy:  0.70387, RMSE:  2.92138, elapse: 0.197 min
+  - [Info] Maximum ll: -1.31378, Maximum accuracy:  0.70484, Minimum RMSE:  2.92138
+[ Epoch 52 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:51,  3.14s/it]                                                                  113
+  - (Training)    loglikelihood: -1.29575, accuracy:  0.68073, RMSE:  2.74418, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  309.3887076205191
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.30703, accuracy:  0.70419, RMSE:  2.92210, elapse: 0.198 min
+  - [Info] Maximum ll: -1.30703, Maximum accuracy:  0.70484, Minimum RMSE:  2.92138
+[ Epoch 53 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:03,  3.25s/it]                                                                  113
+  - (Training)    loglikelihood: -1.29101, accuracy:  0.68082, RMSE:  2.74537, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  340.10210837896693
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.10s/it]                                                                  - (Testing)     loglikelihood: -1.30399, accuracy:  0.70387, RMSE:  2.92178, elapse: 0.202 min
+  - [Info] Maximum ll: -1.30399, Maximum accuracy:  0.70484, Minimum RMSE:  2.92138
+[ Epoch 54 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:04<07:54,  4.23s/it]                                                                  113
+  - (Training)    loglikelihood: -1.28522, accuracy:  0.68163, RMSE:  2.74493, elapse: 0.261 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  301.33595946720953
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:13,  2.26s/it]                                                                  - (Testing)     loglikelihood: -1.29663, accuracy:  0.70226, RMSE:  2.92013, elapse: 0.205 min
+  - [Info] Maximum ll: -1.29663, Maximum accuracy:  0.70484, Minimum RMSE:  2.92013
+[ Epoch 55 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:23,  3.42s/it]                                                                  113
+  - (Training)    loglikelihood: -1.28184, accuracy:  0.68134, RMSE:  2.74457, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  311.4583212806196
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.29143, accuracy:  0.70419, RMSE:  2.92155, elapse: 0.197 min
+  - [Info] Maximum ll: -1.29143, Maximum accuracy:  0.70484, Minimum RMSE:  2.92013
+[ Epoch 56 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:49,  3.12s/it]                                                                  113
+  - (Training)    loglikelihood: -1.27464, accuracy:  0.68170, RMSE:  2.74363, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  297.4208613863229
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.14s/it]                                                                  - (Testing)     loglikelihood: -1.28993, accuracy:  0.70484, RMSE:  2.92036, elapse: 0.203 min
+  - [Info] Maximum ll: -1.28993, Maximum accuracy:  0.70484, Minimum RMSE:  2.92013
+[ Epoch 57 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:10,  3.30s/it]                                                                  113
+  - (Training)    loglikelihood: -1.27202, accuracy:  0.68177, RMSE:  2.74426, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  318.33307938385747
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.28391, accuracy:  0.70226, RMSE:  2.92153, elapse: 0.198 min
+  - [Info] Maximum ll: -1.28391, Maximum accuracy:  0.70484, Minimum RMSE:  2.92013
+[ Epoch 58 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:04<08:53,  4.77s/it]                                                                  113
+  - (Training)    loglikelihood: -1.26871, accuracy:  0.68084, RMSE:  2.74498, elapse: 0.270 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  313.0702638554616
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.27984, accuracy:  0.70323, RMSE:  2.92091, elapse: 0.199 min
+  - [Info] Maximum ll: -1.27984, Maximum accuracy:  0.70484, Minimum RMSE:  2.92013
+[ Epoch 59 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:58,  3.20s/it]                                                                  113
+  - (Training)    loglikelihood: -1.26604, accuracy:  0.68093, RMSE:  2.74384, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  309.7050449714983
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.02s/it]                                                                  - (Testing)     loglikelihood: -1.27778, accuracy:  0.70516, RMSE:  2.92141, elapse: 0.201 min
+  - [Info] Maximum ll: -1.27778, Maximum accuracy:  0.70516, Minimum RMSE:  2.92013
+[ Epoch 60 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:01,  3.23s/it]                                                                  113
+  - (Training)    loglikelihood: -1.26238, accuracy:  0.68104, RMSE:  2.74502, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  301.5924189975611
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.04s/it]                                                                  - (Testing)     loglikelihood: -1.27644, accuracy:  0.70194, RMSE:  2.92144, elapse: 0.201 min
+  - [Info] Maximum ll: -1.27644, Maximum accuracy:  0.70516, Minimum RMSE:  2.92013
+[ Epoch 61 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:52,  3.15s/it]                                                                  113
+  - (Training)    loglikelihood: -1.26107, accuracy:  0.68163, RMSE:  2.74387, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  318.8414240283887
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.27216, accuracy:  0.70548, RMSE:  2.92139, elapse: 0.197 min
+  - [Info] Maximum ll: -1.27216, Maximum accuracy:  0.70548, Minimum RMSE:  2.92013
+[ Epoch 62 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:43,  3.60s/it]                                                                  113
+  - (Training)    loglikelihood: -1.25793, accuracy:  0.68140, RMSE:  2.74506, elapse: 0.250 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  305.8822343714706
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.27051, accuracy:  0.70613, RMSE:  2.92122, elapse: 0.199 min
+  - [Info] Maximum ll: -1.27051, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 63 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:04,  3.25s/it]                                                                  113
+  - (Training)    loglikelihood: -1.25408, accuracy:  0.68140, RMSE:  2.74417, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  320.84506410157525
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.07s/it]                                                                  - (Testing)     loglikelihood: -1.26862, accuracy:  0.70323, RMSE:  2.92075, elapse: 0.202 min
+  - [Info] Maximum ll: -1.26862, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 64 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:19,  3.39s/it]                                                                  113
+  - (Training)    loglikelihood: -1.25255, accuracy:  0.68185, RMSE:  2.74406, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  336.45733277422886
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.26473, accuracy:  0.70258, RMSE:  2.92148, elapse: 0.200 min
+  - [Info] Maximum ll: -1.26473, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 65 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:11,  3.32s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24988, accuracy:  0.68204, RMSE:  2.74302, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  319.4284260429638
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.26246, accuracy:  0.70581, RMSE:  2.92130, elapse: 0.199 min
+  - [Info] Maximum ll: -1.26246, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 66 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:07,  3.28s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24659, accuracy:  0.68215, RMSE:  2.74372, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  311.50979380876976
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.01s/it]                                                                  - (Testing)     loglikelihood: -1.26151, accuracy:  0.70516, RMSE:  2.92114, elapse: 0.201 min
+  - [Info] Maximum ll: -1.26151, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 67 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:52,  3.15s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24522, accuracy:  0.68285, RMSE:  2.74402, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  299.18964693784955
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:17,  2.93s/it]                                                                  - (Testing)     loglikelihood: -1.25844, accuracy:  0.70484, RMSE:  2.92090, elapse: 0.216 min
+  - [Info] Maximum ll: -1.25844, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 68 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:04<08:25,  4.51s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24369, accuracy:  0.68237, RMSE:  2.74321, elapse: 0.267 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  278.89051774262794
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  86%|████████▌ | 6/7 [00:02<00:00,  3.00it/s]                                                                  - (Testing)     loglikelihood: -1.25794, accuracy:  0.70452, RMSE:  2.92134, elapse: 0.200 min
+  - [Info] Maximum ll: -1.25794, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 69 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:06,  3.27s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24338, accuracy:  0.68156, RMSE:  2.74201, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  314.50077239477554
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:14,  2.41s/it]                                                                  - (Testing)     loglikelihood: -1.25728, accuracy:  0.70484, RMSE:  2.92138, elapse: 0.208 min
+  - [Info] Maximum ll: -1.25728, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 70 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:03,  3.25s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24223, accuracy:  0.68165, RMSE:  2.74391, elapse: 0.250 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  304.44133005166515
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:14,  2.46s/it]                                                                  - (Testing)     loglikelihood: -1.25546, accuracy:  0.70581, RMSE:  2.92105, elapse: 0.208 min
+  - [Info] Maximum ll: -1.25546, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 71 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:04<07:54,  4.23s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24090, accuracy:  0.68229, RMSE:  2.74204, elapse: 0.263 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  307.3633222812934
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25289, accuracy:  0.70452, RMSE:  2.92132, elapse: 0.199 min
+  - [Info] Maximum ll: -1.25289, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 72 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:05,  3.26s/it]                                                                  113
+  - (Training)    loglikelihood: -1.24063, accuracy:  0.68176, RMSE:  2.74273, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  309.5119838303856
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25569, accuracy:  0.70581, RMSE:  2.92117, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25289, Maximum accuracy:  0.70613, Minimum RMSE:  2.92013
+[ Epoch 73 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:59,  3.21s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23864, accuracy:  0.68154, RMSE:  2.74129, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  322.2084228631028
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25481, accuracy:  0.70710, RMSE:  2.92078, elapse: 0.198 min
+  - [Info] Maximum ll: -1.25289, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 74 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:04,  3.26s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23787, accuracy:  0.68235, RMSE:  2.74245, elapse: 0.247 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  309.5839407167968
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25155, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25155, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 75 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:01,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23694, accuracy:  0.68149, RMSE:  2.74331, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]
+train delay:  4.822240352630615
+train other:  299.52608372114304
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:13,  2.25s/it]                                                                  - (Testing)     loglikelihood: -1.25200, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.205 min
+  - [Info] Maximum ll: -1.25155, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 76 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:26,  3.45s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23668, accuracy:  0.68220, RMSE:  2.74194, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.294 0.073 0.581 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.14623590276141232
+train other:  5645.40611353809
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.06s/it]                                                                  - (Testing)     loglikelihood: -1.25159, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.202 min
+  - [Info] Maximum ll: -1.25155, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 77 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:54,  3.17s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23761, accuracy:  0.68237, RMSE:  2.74169, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.288 0.073 0.534 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.09679034534204946
+train other:  15907.194393333455
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25163, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.199 min
+  - [Info] Maximum ll: -1.25155, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 78 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:59,  3.21s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23553, accuracy:  0.68215, RMSE:  2.74190, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.283 0.073 0.493 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.0841431486729423
+train other:  25304.85872315472
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25214, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25155, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 79 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:26,  3.45s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23699, accuracy:  0.68172, RMSE:  2.74332, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.28  0.073 0.48  0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.08420598268036603
+train other:  34970.4414699645
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.08s/it]                                                                  - (Testing)     loglikelihood: -1.25165, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.202 min
+  - [Info] Maximum ll: -1.25155, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 80 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:59,  3.21s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23677, accuracy:  0.68253, RMSE:  2.74209, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.277 0.073 0.467 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.07684315294077425
+train other:  44804.86829000607
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:12,  2.13s/it]                                                                  - (Testing)     loglikelihood: -1.25098, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.203 min
+  - [Info] Maximum ll: -1.25098, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 81 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:01,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23721, accuracy:  0.68152, RMSE:  2.74200, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.274 0.073 0.456 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.07341663129769377
+train other:  54286.722386356305
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.83s/it]                                                                  - (Testing)     loglikelihood: -1.25167, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.214 min
+  - [Info] Maximum ll: -1.25098, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 82 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:00,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23705, accuracy:  0.68229, RMSE:  2.74331, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.271 0.073 0.443 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.07381525716480575
+train other:  62353.21521923372
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.73s/it]                                                                  - (Testing)     loglikelihood: -1.25160, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.213 min
+  - [Info] Maximum ll: -1.25098, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 83 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:05,  3.26s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23675, accuracy:  0.68194, RMSE:  2.74312, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.268 0.073 0.431 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.07046750171117759
+train other:  72560.50211012286
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25147, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.199 min
+  - [Info] Maximum ll: -1.25098, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 84 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:59,  3.21s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23713, accuracy:  0.68349, RMSE:  2.74342, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.265 0.073 0.422 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.06629226843080675
+train other:  82394.90039458539
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25109, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25098, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 85 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:47,  3.10s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23606, accuracy:  0.68247, RMSE:  2.74206, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.262 0.073 0.413 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.06565495107683182
+train other:  90823.08566787711
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25159, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25098, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 86 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:00,  3.22s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23600, accuracy:  0.68269, RMSE:  2.74220, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.258 0.073 0.405 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.062441955411050805
+train other:  100416.75166180969
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25095, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 87 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:04,  3.26s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23729, accuracy:  0.68203, RMSE:  2.74177, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.255 0.073 0.397 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.06344313020093022
+train other:  110039.67312529226
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25115, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 88 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:51,  3.14s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23655, accuracy:  0.68303, RMSE:  2.74120, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.251 0.073 0.388 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.060533234781814424
+train other:  120952.83867825792
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:13,  2.19s/it]                                                                  - (Testing)     loglikelihood: -1.25134, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.204 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 89 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:19,  3.39s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23667, accuracy:  0.68213, RMSE:  2.74376, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.249 0.073 0.383 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.05674336339734847
+train other:  130945.36423062097
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:16,  2.79s/it]                                                                  - (Testing)     loglikelihood: -1.25126, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.214 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 90 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:03,  3.25s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23647, accuracy:  0.68206, RMSE:  2.74336, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.247 0.073 0.377 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.056780841743480095
+train other:  141503.74173847729
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25137, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 91 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:29,  3.48s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23664, accuracy:  0.68267, RMSE:  2.74254, elapse: 0.249 min, 
+delta_matrix in Main train: 
+ [[0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.245 0.073 0.373 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.0561943331547236
+train other:  149101.7363878553
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25181, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 92 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:23,  3.43s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23788, accuracy:  0.68152, RMSE:  2.74318, elapse: 0.248 min, 
+delta_matrix in Main train: 
+ [[0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.243 0.073 0.367 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.05592217896776521
+train other:  159305.62962025375
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]  - (Validation) :  14%|█▍        | 1/7 [00:02<00:15,  2.62s/it]                                                                  - (Testing)     loglikelihood: -1.25141, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.211 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 93 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:10,  3.31s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23683, accuracy:  0.68263, RMSE:  2.74330, elapse: 0.249 min, 
+delta_matrix in Main train: 
+ [[0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.241 0.073 0.362 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.05338847433653168
+train other:  167684.09552722078
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25184, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.199 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 94 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:03,  3.25s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23770, accuracy:  0.68349, RMSE:  2.74137, elapse: 0.246 min, 
+delta_matrix in Main train: 
+ [[0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.239 0.073 0.357 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.05159622249481952
+train other:  179779.85667823872
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25111, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 95 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:48,  3.11s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23656, accuracy:  0.68274, RMSE:  2.74304, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.237 0.073 0.352 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.05012515718230808
+train other:  188310.54909116082
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25102, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 96 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:47,  3.10s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23527, accuracy:  0.68199, RMSE:  2.74211, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.234 0.073 0.347 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.04926637800979118
+train other:  197755.01424477174
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25142, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 97 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:56,  3.19s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23678, accuracy:  0.68211, RMSE:  2.74273, elapse: 0.243 min, 
+delta_matrix in Main train: 
+ [[0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.232 0.073 0.343 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.04777033597856068
+train other:  208162.91831401887
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25155, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.198 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 98 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:48,  3.11s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23651, accuracy:  0.68185, RMSE:  2.74164, elapse: 0.242 min, 
+delta_matrix in Main train: 
+ [[0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.229 0.073 0.337 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.049676996257187855
+train other:  218222.4983141933
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25155, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25095, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 99 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<06:02,  3.23s/it]                                                                  113
+  - (Training)    loglikelihood: -1.23666, accuracy:  0.68215, RMSE:  2.74280, elapse: 0.245 min, 
+delta_matrix in Main train: 
+ [[0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.226 0.071 0.335 0.004 0.063 0.048 0.047 0.008 0.028]
+ [0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]
+ [0.228 0.073 0.336 0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  0.04631990980990989
+train other:  228701.25808506832
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25085, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.199 min
+  - [Info] Maximum ll: -1.25085, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+[ Epoch 100 ]
+  - (Training)   :   0%|          | 0/113 [00:00<?, ?it/s]  - (Training)   :   1%|          | 1/113 [00:03<05:56,  3.19s/it]                                                                  113
+  - (Training)    loglikelihood: -1.25065, accuracy:  0.68199, RMSE:  2.74772, elapse: 0.244 min, 
+delta_matrix in Main train: 
+ [[0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]
+ [0.102 0.008 0.31  0.    0.057 0.037 0.039 0.012 0.036]]
+train delay:  9.767789018181189
+train other:  259273.84449890727
+  - (Validation) :   0%|          | 0/7 [00:00<?, ?it/s]                                                          - (Testing)     loglikelihood: -1.25114, accuracy:  0.70387, RMSE:  2.92114, elapse: 0.197 min
+  - [Info] Maximum ll: -1.25085, Maximum accuracy:  0.70710, Minimum RMSE:  2.92013
+saving model
