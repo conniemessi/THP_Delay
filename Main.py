@@ -58,11 +58,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         event_type = event_type - 1  # when event starts from 1
 
         # """ forward """
-        if 0 < epoch <= 25 or 50 < epoch <= 75:
-            optimizer.zero_grad()
-        else:
-            optimizer2.zero_grad()
-        # optimizer.zero_grad()
+        # if 0 < epoch <= 25 or 50 < epoch <= 75:
+        #     optimizer.zero_grad()
+        # else:
+        #     optimizer2.zero_grad()
+        optimizer.zero_grad()
 
         enc_out, prediction, delta_matrix = model(event_type, event_time, epoch, batch_i)
 
@@ -158,11 +158,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #                 parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
         #                 parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
 
-        if 0 < epoch < 25 or 50 < epoch < 75:
-            optimizer.step()
-        else:
-            optimizer2.step()
-        # optimizer.step()
+        # if 0 < epoch < 25 or 50 < epoch < 75:
+        #     optimizer.step()
+        # else:
+        #     optimizer2.step()
+        optimizer.step()
 
         # gradient norm
         grad_norm_delay = 0
@@ -317,13 +317,13 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
             # for line in delta_matrix_grad:
             #     f.write("".join(str(line)) + "\n")
 
-        # scheduler.step()
+        scheduler.step()
         # scheduler2.step()
 
-        if 0 < epoch < 25 or 50 < epoch < 75:
-            scheduler.step()
-        else:
-            scheduler2.step()
+        # if 0 < epoch < 25 or 50 < epoch < 75:
+        #     scheduler.step()
+        # else:
+        #     scheduler2.step()
 
 
         # print("saving model")
