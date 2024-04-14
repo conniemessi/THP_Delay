@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # Read data from file
-filename = 'data/toy_one/3dim_20000seq_64ev/2000_100_20_input3_hidden32_softplus.txt'
+filename = 'data/toy_one/3dim_20000seq_64ev/2000_100_20_input16_hidden64_softplus_batch128.txt'
 epoch = []
 log_likelihood = []
 accuracy = []

@@ -1,6 +1,6 @@
 device=0
-data=data/toy_one/3dim_20000seq_64ev/
-batch=32
+data=data/toy_one/5dim_2000seq_128ev/
+batch=128
 n_head=1
 n_layers=1
 d_model=16
@@ -12,9 +12,9 @@ dropout=0.1
 lr=0.001
 smooth=0.1
 epoch=100
-log=data/toy_one/3dim_20000seq_64ev/2000_100_20_input16_hidden64_softplus.txt
+log=data/toy_one/5dim_2000seq_128ev/100_20_input16_hidden64_softplus_batch128.txt
 num_events=64
-lr_delay=0.01
+lr_delay=0.001
 n_hidden=64
 n_input=16
 

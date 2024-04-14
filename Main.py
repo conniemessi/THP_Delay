@@ -26,13 +26,13 @@ def prepare_dataloader(opt):
 
     print('[Info] Loading train data...')
     train_data, num_types = load_data(opt.data + 'train_new.pkl', 'train')
-    train_data = train_data[:1600]
+    # train_data = train_data[:1600]
     print('[Info] Loading dev data...')
     dev_data, _ = load_data(opt.data + 'dev_new.pkl', 'dev')
-    dev_data = dev_data[:200]
+    # dev_data = dev_data[:200]
     print('[Info] Loading test data...')
     test_data, _ = load_data(opt.data + 'test_new.pkl', 'test')
-    test_data = test_data[:200]
+    # test_data = test_data[:200]
 
     trainloader = get_dataloader(train_data, opt.batch_size, shuffle=True)
     testloader = get_dataloader(test_data, opt.batch_size, shuffle=False)
@@ -122,15 +122,16 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
 
         # SE is usually large, scale it to stabilize training
         scale_time_loss = 100
-        weight_decay = 0.001
-        weight_decay_delay = 0.01
+        weight_decay = 1
+        weight_decay_delay = 10
         lambda1 = 0.1
         all_linear1_params = torch.cat([x.view(-1) for x in model.masker.fc2.parameters()])
         l1_regularization = lambda1 * torch.norm(all_linear1_params, 1)  # l1 norm
         # loss = weight_decay * grad_norm_other + pred_loss + se / scale_time_loss + weight_decay_delay * grad_norm_delay
         loss = event_loss + pred_loss + se / scale_time_loss  # original
         # loss = event_loss + pred_loss + se / scale_time_loss + l1_regularization  # original
-        loss.backward()
+        # loss.backward()  # original
+        loss.backward(retain_graph=True)
 
         # torch.autograd.set_detect_anomaly(True)
         # with torch.autograd.detect_anomaly():
@@ -161,12 +162,6 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #                 parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
         #                 parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
 
-        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
-            optimizer2.step()  # only THP
-        else:
-            optimizer.step()  # THP + Masker
-        # optimizer.step()
-
         # gradient norm
         grad_norm_delay = 0
         grad_norm_other = 0
@@ -182,6 +177,10 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         grad_norm_other = grad_norm_other ** 0.5
         # grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
+        total_loss = loss + weight_decay_delay * grad_norm_delay + weight_decay * grad_norm_other
+        print(loss, grad_norm_delay, grad_norm_other, total_loss)
+        total_loss.backward()
+
         # for name, parms in model.named_parameters():
         #     if "delta_matrix" in name:
         #         delta_matrix_grad = np.round(parms.grad.detach().numpy(), 3)
@@ -194,6 +193,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #     for line in delta_matrix_grad:
         #         f.write("".join(str(line)) + "\n")
 
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+            optimizer2.step()  # only THP
+        else:
+            optimizer.step()  # THP + Masker
+        # optimizer.step()
 
         """ note keeping """
         total_event_ll += -event_loss.item()
