@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 import transformer.Constants as Constants
 from transformer.Layers import EncoderLayer
-
+import Utils
 
 def get_non_pad_mask(seq):
     """ Get the non-padding positions. """
@@ -165,19 +165,23 @@ class RNN_layers(nn.Module):
 
 
 class Masker(nn.Module):
-    def __init__(self, num_types, n_events, n_hidden=256, n_mask=4):
+    def __init__(self, num_types, n_events, n_hidden, n_input):
         super(Masker, self).__init__()
         # self.fc1 = nn.Linear(n_events * 2, n_hidden)
-        self.fc1 = nn.Linear(32, n_hidden)
-        self.fc2 = nn.Linear(n_hidden, num_types * num_types)
+        self.fc1 = nn.Linear(n_input, n_hidden)
+        # self.fc2 = nn.Linear(n_hidden, num_types * num_types)
+        self.fc2 = nn.Linear(n_hidden, num_types)
 
     def forward(self, x, event_type, event_time):
         # x = torch.normal(15, 3, size=(1, 64))  # noise
         # x = torch.cat((event_time, event_type), 1)
         z = self.fc2(F.relu(self.fc1(x)))
         # m = nn.Dropout(p=0.5)  # sparse
-        # z = m(z)
-        z = abs(z)
+        m = nn.Softplus()
+        # m = nn.ReLU()
+        z = m(z)
+        # z = abs(z)
+        # z = z.clamp_min_(0)
         return z
 
     # def __init__(self, num_types, n_events, n_hidden=100, n_mask=4):
@@ -210,10 +214,10 @@ class Transformer(nn.Module):
     def __init__(
             self,
             epoch_num, num_types, num_events, d_model=16, d_rnn=8, d_inner=64,
-            n_layers=1, n_head=4, d_k=4, d_v=4, dropout=0.1):
+            n_layers=1, n_head=4, d_k=4, d_v=4, dropout=0.1, n_hidden=16, n_input=3):
         super().__init__()
 
-        self.masker = Masker(num_types=num_types, n_events=num_events)
+        self.masker = Masker(num_types=num_types, n_events=num_events, n_hidden=n_hidden, n_input=n_input)
 
         # self.mask_latent = nn.Parameter(torch.rand(num_events, num_events), requires_grad=True)
         # self.mask = torch.triu(
@@ -243,6 +247,7 @@ class Transformer(nn.Module):
 
         self.num_types = num_types
         self.num_events = num_events
+        self.n_input = n_input
 
         # convert hidden vectors into a scalar
         self.linear = nn.Linear(d_model, num_types)
@@ -286,7 +291,7 @@ class Transformer(nn.Module):
         result[:, :, 1::2] = torch.cos(result[:, :, 1::2])
         return result * non_pad_mask
 
-    def forward(self, event_type, event_time, epoch, batch_i):
+    def forward(self, event_type, event_time, delta_matrix_pre, epoch, batch_i):
         """
         Return the hidden representations and predictions.
         For a sequence (l_1, l_2, ..., l_N), we predict (l_2, ..., l_N, l_{N+1}).
@@ -304,12 +309,13 @@ class Transformer(nn.Module):
         # delta_matrix_1d = self.masker(x.flatten()).detach()
         # np.random.seed(epoch)
 
-        delta_matrix_1d = torch.zeros(self.num_types, self.num_types)
+        delta_matrix_output = torch.zeros(self.num_types)
         self.num_events = len(event_type[0])
         batch_size = len(event_type)
         new_mask = torch.ones(self.num_events, self.num_events)
         new_mask = new_mask.repeat(batch_size, 1, 1)
-        if 25 < epoch <= 50 or 75 < epoch <= 100:
+        x = torch.normal(10, 0, size=(batch_size, self.n_input))  # noise
+        if epoch > 20:
             # for k in range(batch_size):
             #     x = torch.normal(10, 1, size=(1, 32))  # noise
             #     delta_matrix_1d = self.masker(x, event_type, event_time)
@@ -323,8 +329,20 @@ class Transformer(nn.Module):
             #             delay = delta_matrix_1d[0][delay_i * self.num_types + delay_j]
             #             new_mask[k][i][j] = (event_time[k])[i] - ((event_time[k])[j] + delay)
 
-            x = torch.normal(10, 1, size=(batch_size, 32))  # noise
-            delta_matrix_1d = self.masker(x, event_type, event_time)
+            # delta_matrix_train = self.masker(x, event_type, event_time) # k*k
+
+            delta_matrix = []
+            for k in range(batch_size):
+                delta_matrix_zeros = torch.zeros((self.num_types, self.num_types))
+                if 40 < epoch <= 60 or 80 < epoch <= 100:  # only THP
+                    delta_matrix_zeros[-1, :] = delta_matrix_pre
+                    delta_matrix_output = delta_matrix_pre
+                else:
+                    delta_matrix_zeros[-1, :] = self.masker(x, event_type, event_time)[k]
+                    delta_matrix_output = self.masker(x, event_type, event_time)[k]
+                delta_matrix_one = delta_matrix_zeros.view(1, -1)
+                delta_matrix.append(delta_matrix_one)
+            delta_matrix_1d = torch.cat(delta_matrix, dim=0)
 
             delay_indices_i = (event_type - 1).view(batch_size, self.num_events, 1)
             delay_indices_j = (event_type - 1).view(batch_size, 1, self.num_events)
@@ -376,7 +394,8 @@ class Transformer(nn.Module):
         time_prediction = self.time_predictor(enc_output, non_pad_mask)
 
         type_prediction = self.type_predictor(enc_output, non_pad_mask)
-        self.delta_matrix.data.clamp_(min=0)
+        # self.delta_matrix.data.clamp_(min=0)
+        # self.delta_matrix=Utils.softplus(self.delta_matrix)
 
-        return enc_output, (type_prediction, time_prediction), delta_matrix_1d
+        return enc_output, (type_prediction, time_prediction), delta_matrix_output
         # return enc_output, (type_prediction, time_prediction), self.delta_matrix

@@ -26,10 +26,13 @@ def prepare_dataloader(opt):
 
     print('[Info] Loading train data...')
     train_data, num_types = load_data(opt.data + 'train_new.pkl', 'train')
+    train_data = train_data[:1600]
     print('[Info] Loading dev data...')
     dev_data, _ = load_data(opt.data + 'dev_new.pkl', 'dev')
+    dev_data = dev_data[:200]
     print('[Info] Loading test data...')
     test_data, _ = load_data(opt.data + 'test_new.pkl', 'test')
+    test_data = test_data[:200]
 
     trainloader = get_dataloader(train_data, opt.batch_size, shuffle=True)
     testloader = get_dataloader(test_data, opt.batch_size, shuffle=False)
@@ -37,7 +40,7 @@ def prepare_dataloader(opt):
 
 
 def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt, epoch,
-                other_params, paras):
+                other_params, paras, num_types, delta_matrix_pre):
     """ Epoch operation in training phase. """
 
     model.train()
@@ -58,13 +61,13 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         event_type = event_type - 1  # when event starts from 1
 
         # """ forward """
-        # if 0 < epoch <= 25 or 50 < epoch <= 75:
-        #     optimizer.zero_grad()
-        # else:
-        #     optimizer2.zero_grad()
-        optimizer.zero_grad()
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+            optimizer2.zero_grad()  # only THP
+        else:
+            optimizer.zero_grad()  # THP + Masker
+        # optimizer.zero_grad()
 
-        enc_out, prediction, delta_matrix = model(event_type, event_time, epoch, batch_i)
+        enc_out, prediction, delta_matrix = model(event_type, event_time, delta_matrix_pre, epoch, batch_i)
 
         """ backward """
         # negative log-likelihood
@@ -158,11 +161,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #                 parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
         #                 parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
 
-        # if 0 < epoch < 25 or 50 < epoch < 75:
-        #     optimizer.step()
-        # else:
-        #     optimizer2.step()
-        optimizer.step()
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+            optimizer2.step()  # only THP
+        else:
+            optimizer.step()  # THP + Masker
+        # optimizer.step()
 
         # gradient norm
         grad_norm_delay = 0
@@ -204,12 +207,11 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         total_grad_other += grad_norm_other
 
     rmse = np.sqrt(total_time_se / total_num_pred)
-    print(batch_i)
     return (total_event_ll / total_num_event, total_event_rate / total_num_pred, rmse, delta_matrix,
             total_grad_delay / batch_i, total_grad_other / batch_i)
 
 
-def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
+def eval_epoch(model, validation_data, pred_loss_func, delta_matrix_pre, num_types, opt, epoch):
     """ Epoch operation in evaluation phase. """
 
     model.eval()
@@ -228,8 +230,8 @@ def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
             event_time, time_gap, event_type = map(lambda x: x.to(opt.device), batch)
             event_type = event_type - 1  # when event starts from 1
             """ forward """
-            enc_out, prediction, delta_matrix = model(event_type, event_time, epoch=0, batch_i = 0)
-
+            enc_out, prediction, delta_matrix = model(event_type, event_time, delta_matrix_pre, epoch, batch_i=0)
+            # print("validata delay: ", delta_matrix)
             """ compute loss """
             event_ll, non_event_ll = Utils.log_likelihood(model, enc_out, event_time, event_type)
             event_loss = -torch.sum(event_ll - non_event_ll)
@@ -238,14 +240,14 @@ def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
 
             """ note keeping """
             # gradient norm
-            grad_norm_delay = 0
-            grad_norm_other = 0
-            for name, param in model.named_parameters():
-                if param.grad is not None:
-                    if "masker" in name:
-                        grad_norm_delay += param.grad.data.norm(2).item() ** 2
-                    else:
-                        grad_norm_other += param.grad.data.norm(2).item() ** 2
+            # grad_norm_delay = 0
+            # grad_norm_other = 0
+            # for name, param in model.named_parameters():
+            #     if param.grad is not None:
+            #         if "masker" in name:
+            #             grad_norm_delay += param.grad.data.norm(2).item() ** 2
+            #         else:
+            #             grad_norm_other += param.grad.data.norm(2).item() ** 2
             # grad_norm_delay = grad_norm_delay ** 0.5
             # grad_norm_other = grad_norm_other ** 0.5
             # grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -263,19 +265,21 @@ def eval_epoch(model, validation_data, pred_loss_func, opt, epoch):
     return total_event_ll / total_num_event, total_event_rate / total_num_pred, rmse
 
 def train(model, training_data, validation_data, optimizer, optimizer2, scheduler, scheduler2, pred_loss_func, opt,
-          other_params, paras):
+          other_params, paras, num_types):
     """ Start training. """
 
     valid_event_losses = []  # validation log-likelihood
     valid_pred_losses = []  # validation event type prediction accuracy
     valid_rmse = []  # validation event time prediction RMSE
+    delta_matrix_pre = torch.zeros(num_types)
     for epoch_i in range(opt.epoch):
         epoch = epoch_i + 1
         print('[ Epoch', epoch, ']')
 
         start = time.time()
         train_event, train_type, train_time, delta_matrix, train_delay, train_other = train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt, epoch,
-                                                                        other_params, paras)
+                                                                        other_params, paras, num_types, delta_matrix_pre)
+        delta_matrix_pre = delta_matrix.detach()
         print('  - (Training)    loglikelihood: {ll: 8.5f}, '
               'accuracy: {type: 8.5f}, RMSE: {rmse: 8.5f}, '
               'elapse: {elapse:3.3f} min, '
@@ -292,7 +296,7 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
         print("train other: ", train_other)
 
         start = time.time()
-        valid_event, valid_type, valid_time = eval_epoch(model, validation_data, pred_loss_func, opt, epoch)
+        valid_event, valid_type, valid_time = eval_epoch(model, validation_data, pred_loss_func, num_types, delta_matrix_pre, opt, epoch)
         print('  - (Testing)     loglikelihood: {ll: 8.5f}, '
               'accuracy: {type: 8.5f}, RMSE: {rmse: 8.5f}, '
               'elapse: {elapse:3.3f} min'
@@ -317,14 +321,12 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
             # for line in delta_matrix_grad:
             #     f.write("".join(str(line)) + "\n")
 
-        scheduler.step()
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+            scheduler2.step()  # only THP
+        else:
+            scheduler.step()  # THP + Masker
+        # scheduler.step()
         # scheduler2.step()
-
-        # if 0 < epoch < 25 or 50 < epoch < 75:
-        #     scheduler.step()
-        # else:
-        #     scheduler2.step()
-
 
         # print("saving model")
         # torch.save(model, opt.data + "/lr_delay_" + str(opt.lr) + "/" + str(epoch) + "model.pt")
@@ -356,6 +358,8 @@ def main():
 
     parser.add_argument('-num_events', type=int, default=32)
     parser.add_argument('-lr_delay', type=float, default=0.01)
+    parser.add_argument('-n_hidden', type=int, default=16)
+    parser.add_argument('-n_input', type=int, default=3)
 
     opt = parser.parse_args()
 
@@ -367,7 +371,7 @@ def main():
     with open(opt.log, 'w') as f:
         f.write(format(opt))
         f.write('\n')
-        f.write('Epoch, Log-likelihood, Accuracy, RMSE, Gradient_Masker, Gradient_THP\n')
+        f.write('Epoch, Log-likelihood-Test, Accuracy, RMSE, Log-likelihood-Train, Gradient_Masker, Gradient_THP\n')
 
     print('[Info] parameters: {}'.format(opt))
 
@@ -385,7 +389,9 @@ def main():
         n_head=opt.n_head,
         d_k=opt.d_k,
         d_v=opt.d_v,
-        dropout=opt.dropout
+        dropout=opt.dropout,
+        n_hidden=opt.n_hidden,
+        n_input=opt.n_input
     )
     model.to(opt.device)
 
@@ -397,8 +403,8 @@ def main():
             p.requires_grad = True
             paras.append(p)
 
-    optimizer2 = optim.Adam(paras, opt.lr_delay, betas=(0.9, 0.999), eps=1e-05)
-    scheduler2 = optim.lr_scheduler.StepLR(optimizer2, 10, gamma=0.5)
+    # optimizer2 = optim.Adam(paras, opt.lr_delay, betas=(0.9, 0.999), eps=1e-05)
+    # scheduler2 = optim.lr_scheduler.StepLR(optimizer2, 10, gamma=0.5)
 
     all_params = model.parameters()
     params_id = list(map(id, paras))
@@ -410,10 +416,11 @@ def main():
     )
 
     # no delay
-    # optimizer = optim.Adam([
-    #     {'params': other_params}],
-    #     opt.lr, betas=(0.9, 0.999), eps=1e-05
-    # )
+    optimizer2 = optim.Adam([
+        {'params': other_params}],
+        opt.lr, betas=(0.9, 0.999), eps=1e-05
+    )
+    scheduler2 = optim.lr_scheduler.StepLR(optimizer2, 10, gamma=0.5)
 
     # original
     # optimizer = optim.Adam(filter(lambda x: x.requires_grad, model.parameters()),
@@ -435,7 +442,7 @@ def main():
 
     """ train the model """
     train(model, trainloader, testloader, optimizer, optimizer2, scheduler, scheduler2, pred_loss_func, opt,
-          other_params, paras)
+          other_params, paras, num_types)
 
     print("saving model")
     torch.save(model, opt.data + "model.pt")
