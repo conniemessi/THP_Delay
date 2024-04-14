@@ -122,8 +122,8 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
 
         # SE is usually large, scale it to stabilize training
         scale_time_loss = 100
-        weight_decay = 1
-        weight_decay_delay = 10
+        weight_decay = 0.01
+        weight_decay_delay = 1
         lambda1 = 0.1
         all_linear1_params = torch.cat([x.view(-1) for x in model.masker.fc2.parameters()])
         l1_regularization = lambda1 * torch.norm(all_linear1_params, 1)  # l1 norm
@@ -178,7 +178,7 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         # grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
         total_loss = loss + weight_decay_delay * grad_norm_delay + weight_decay * grad_norm_other
-        print(loss, grad_norm_delay, grad_norm_other, total_loss)
+        # print(loss, grad_norm_delay, grad_norm_other, total_loss)
         total_loss.backward()
 
         # for name, parms in model.named_parameters():
