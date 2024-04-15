@@ -30,17 +30,17 @@ def simulate_hawkes_thinning(baseline_intensity, triggering_intensity, end_time,
     accepted_events = []
     for dim, timestamps in enumerate(timestamps_all):
         for timestamp in timestamps:
-            total_intensity = baseline_intensity[dim]
+            intensity = baseline_intensity[dim]
             # if t == (num_dimensions - 1):
             #     print(t)
             #     total_intensity = calculate_intensity(t, timestamp, timestamps_all, triggering_intensity)
-            if random.random() <= total_intensity:
+            if random.random() <= intensity:
                 accepted_events.append([timestamp, dim])  # Store timestamp and dimension
 
-            intensity = (triggering_intensity[dim] *
-                         quad(lambda s: g_function(timestamp - delay_matrix[dim] - s), 0, timestamp - delay_matrix[dim])[0])
-
-            if (np.random.uniform(0, 1) < intensity) and (timestamp + delay_matrix[dim] < end_time):
+            intensity = sum((triggering_intensity[u_prime] *
+                         quad(lambda s: g_function(timestamp - delay_matrix[u_prime] - s), 0, timestamp - delay_matrix[u_prime])[0] \
+                         for u_prime in range(num_dimensions)))
+            if (random.random() <= intensity) and (timestamp + delay_matrix[dim] < end_time):
                 accepted_events.append([timestamp + delay_matrix[dim], num_dimensions - 1])
 
     return accepted_events

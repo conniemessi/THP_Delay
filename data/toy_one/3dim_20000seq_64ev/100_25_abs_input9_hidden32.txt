@@ -1,0 +1,7 @@
+Namespace(data='data/toy_one/3dim_20000seq_64ev/', epoch=100, batch_size=32, d_model=16, d_rnn=8, d_inner_hid=64, d_k=16, d_v=16, n_head=1, n_layers=1, dropout=0.1, lr=0.001, smooth=0.1, log='data/toy_one/3dim_20000seq_64ev/100_25_abs_input9_hidden32.txt', num_events=64, lr_delay=0.01, n_hidden=32, n_input=9, device=device(type='cpu'))
+Epoch, Log-likelihood, Accuracy, RMSE, Gradient_Masker, Gradient_THP
+1,  0.58728,  0.62279,  0.27366,  0.43394,  0.00000,  536.55986
+delay:
+[0. 0. 0.]
+[0. 0. 0.]
+[0. 0. 0.]
