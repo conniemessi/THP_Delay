@@ -6,7 +6,7 @@ from scipy.integrate import quad
 
 def g_function(t):
     # Define the impulse response function g_uu'
-    return np.exp(-t ** 2)
+    return np.exp(-t)
 
 
 def simulate_hawkes_thinning(baseline_intensity, triggering_intensity, end_time, delay_matrix):
