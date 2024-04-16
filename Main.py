@@ -61,7 +61,10 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         event_type = event_type - 1  # when event starts from 1
 
         # """ forward """
-        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        # if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        # if 0 < epoch <= 10 or 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
+        # if 0 < epoch <= 10 or 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
+        if 0 < epoch <= 10:
             optimizer2.zero_grad()  # only THP
         else:
             optimizer.zero_grad()  # THP + Masker
@@ -138,30 +141,6 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #     loss.backward()
 
         """ update parameters """
-
-        # if batch_i <= 10:
-        #     for name, parms in model.named_parameters():
-        #         if parms.grad is not None:
-        #             if "delta_matrix" in name:
-        #                 parms.grad[:, 2:] = torch.zeros_like(parms.grad[:,2:])
-        #                 parms.grad[2:, 0:2] = torch.zeros_like(parms.grad[2:, 0:2])
-        #
-        # if 10 < batch_i <= 20:
-        #     for name, parms in model.named_parameters():
-        #         if parms.grad is not None:
-        #             if "delta_matrix" in name:
-        #                 parms.grad[:, 0:2] = torch.zeros_like(parms.grad[:,0:2])
-        #                 parms.grad[:, 4:] = torch.zeros_like(parms.grad[:,4:])
-        #                 parms.grad[0:1, 2:4] = torch.zeros_like(parms.grad[0:1, 2:4])
-        #                 parms.grad[4:, 2:4] = torch.zeros_like(parms.grad[4:, 2:4])
-        #
-        # if batch_i > 20:
-        #     for name, parms in model.named_parameters():
-        #         if parms.grad is not None:
-        #             if "delta_matrix" in name:
-        #                 parms.grad[:, 0:4] = torch.zeros_like(parms.grad[:, 0:4])
-        #                 parms.grad[0:4, 4:] = torch.zeros_like(parms.grad[0:4, 4:])
-
         # gradient norm
         grad_norm_delay = 0
         grad_norm_other = 0
@@ -193,7 +172,10 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #     for line in delta_matrix_grad:
         #         f.write("".join(str(line)) + "\n")
 
-        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        # if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        # if 0 < epoch <= 10 or 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
+        # if 0 < epoch <= 10 or 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
+        if 0 < epoch <= 10:
             optimizer2.step()  # only THP
         else:
             optimizer.step()  # THP + Masker
@@ -325,7 +307,10 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
             # for line in delta_matrix_grad:
             #     f.write("".join(str(line)) + "\n")
 
-        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        # if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        # if 0 < epoch <= 10 or 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
+        # if 0 < epoch <= 10 or 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
+        if 0 < epoch <= 10:
             scheduler2.step()  # only THP
         else:
             scheduler.step()  # THP + Masker

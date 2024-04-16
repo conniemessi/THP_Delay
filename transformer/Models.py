@@ -219,12 +219,6 @@ class Transformer(nn.Module):
 
         self.masker = Masker(num_types=num_types, n_events=num_events, n_hidden=n_hidden, n_input=n_input)
 
-        # self.mask_latent = nn.Parameter(torch.rand(num_events, num_events), requires_grad=True)
-        # self.mask = torch.triu(
-        #         torch.ones((num_events, num_events), dtype=torch.uint8), diagonal=1)
-
-        # self.delay_score = nn.Parameter(torch.tensor(1.0), requires_grad=True)
-
         # delay_init = torch.Tensor([[10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
         #                            [10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
         #                            [0.0, 0.0, 10.0, 10.0, 0.0, 0.0],
@@ -315,7 +309,8 @@ class Transformer(nn.Module):
         new_mask = torch.ones(self.num_events, self.num_events)
         new_mask = new_mask.repeat(batch_size, 1, 1)
         x = torch.normal(10, 0, size=(batch_size, self.n_input))  # noise
-        if epoch > 20:
+        # if epoch > 20:
+        if epoch > 10:  # the first 0-10 use delay=0
             # for k in range(batch_size):
             #     x = torch.normal(10, 1, size=(1, 32))  # noise
             #     delta_matrix_1d = self.masker(x, event_type, event_time)
@@ -329,20 +324,23 @@ class Transformer(nn.Module):
             #             delay = delta_matrix_1d[0][delay_i * self.num_types + delay_j]
             #             new_mask[k][i][j] = (event_time[k])[i] - ((event_time[k])[j] + delay)
 
-            # delta_matrix_train = self.masker(x, event_type, event_time) # k*k
-
+            # delta_matrix_1d = self.masker(x, event_type, event_time) # k*k
             delta_matrix = []
             for k in range(batch_size):
                 delta_matrix_zeros = torch.zeros((self.num_types, self.num_types))
-                if 40 < epoch <= 60 or 80 < epoch <= 100:  # only THP
-                    delta_matrix_zeros[-1, :] = delta_matrix_pre
+                # if 40 < epoch <= 60 or 80 < epoch <= 100:  # only THP
+                # if 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
+                # if 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
+                if 0 < epoch <= 10:  # cannot reach
+                    delta_matrix_zeros[-1, :] = delta_matrix_pre  # use previous delay value
                     delta_matrix_output = delta_matrix_pre
-                else:
-                    delta_matrix_zeros[-1, :] = self.masker(x, event_type, event_time)[k]
-                    delta_matrix_output = self.masker(x, event_type, event_time)[k]
-                delta_matrix_one = delta_matrix_zeros.view(1, -1)
+                else:  # THP + Masker
+                    delta_matrix_train = self.masker(x, event_type, event_time)
+                    delta_matrix_zeros[-1, :] = delta_matrix_train[k]  # the last (target)
+                    delta_matrix_output = delta_matrix_train[k]
+                delta_matrix_one = delta_matrix_zeros.view(1, -1)  # flatten to (d*d, 1), one batch
                 delta_matrix.append(delta_matrix_one)
-            delta_matrix_1d = torch.cat(delta_matrix, dim=0)
+            delta_matrix_1d = torch.cat(delta_matrix, dim=0)  # cat k to (batch_size, d*d)
 
             delay_indices_i = (event_type - 1).view(batch_size, self.num_events, 1)
             delay_indices_j = (event_type - 1).view(batch_size, 1, self.num_events)
