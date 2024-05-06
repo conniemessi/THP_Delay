@@ -14,6 +14,13 @@ from transformer.Models import Transformer
 from tqdm import tqdm
 
 
+random_seed = 256
+if random_seed:
+    print("Random Seed: {}".format(random_seed))
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+
+
 def prepare_dataloader(opt):
     """ Load data and prepare dataloader. """
 
@@ -58,13 +65,13 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         batch_i += 1
         """ prepare data """
         event_time, time_gap, event_type = map(lambda x: x.to(opt.device), batch)
-        event_type = event_type - 1  # when event starts from 1
+        # event_type = event_type - 1  # when event starts from 1
 
         # """ forward """
-        # if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
         # if 0 < epoch <= 10 or 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
         # if 0 < epoch <= 10 or 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
-        if 0 < epoch <= 10:
+        # if 0 < epoch <= 20:
             optimizer2.zero_grad()  # only THP
         else:
             optimizer.zero_grad()  # THP + Masker
@@ -157,7 +164,6 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         # grad_norm = nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
         total_loss = loss + weight_decay_delay * grad_norm_delay + weight_decay * grad_norm_other
-        # print(loss, grad_norm_delay, grad_norm_other, total_loss)
         total_loss.backward()
 
         # for name, parms in model.named_parameters():
@@ -172,10 +178,10 @@ def train_epoch(model, training_data, optimizer, optimizer2, pred_loss_func, opt
         #     for line in delta_matrix_grad:
         #         f.write("".join(str(line)) + "\n")
 
-        # if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
         # if 0 < epoch <= 10 or 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
         # if 0 < epoch <= 10 or 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
-        if 0 < epoch <= 10:
+        # if 0 < epoch <= 20:
             optimizer2.step()  # only THP
         else:
             optimizer.step()  # THP + Masker
@@ -214,7 +220,7 @@ def eval_epoch(model, validation_data, pred_loss_func, delta_matrix_pre, num_typ
                           desc='  - (Validation) ', leave=False):
             """ prepare data """
             event_time, time_gap, event_type = map(lambda x: x.to(opt.device), batch)
-            event_type = event_type - 1  # when event starts from 1
+            # event_type = event_type - 1  # when event starts from 1
             """ forward """
             enc_out, prediction, delta_matrix = model(event_type, event_time, delta_matrix_pre, epoch, batch_i=0)
             # print("validata delay: ", delta_matrix)
@@ -307,10 +313,10 @@ def train(model, training_data, validation_data, optimizer, optimizer2, schedule
             # for line in delta_matrix_grad:
             #     f.write("".join(str(line)) + "\n")
 
-        # if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
+        if 0 < epoch <= 20 or 40 < epoch <= 60 or 80 < epoch <= 100:
         # if 0 < epoch <= 10 or 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
         # if 0 < epoch <= 10 or 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
-        if 0 < epoch <= 10:
+        # if 0 < epoch <= 20:
             scheduler2.step()  # only THP
         else:
             scheduler.step()  # THP + Masker

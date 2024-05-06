@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 
 # Read data from file
-filename = 'data/toy_one/3dim_20000seq_64ev/2000_100_20_input16_hidden64_softplus_batch128.txt'
+filename = 'data/toy_one/5dim_5000seq_160ev/100_10_90_input5_hidden64_softplus_batch128_grad.txt'
 epoch = []
 log_likelihood = []
 accuracy = []
 rmse = []
 gd_masker = []
 gd_thp = []
+log_likelihood_test = []
 
 with open(filename, 'r') as file:
     next(file)  # Skip parameters
@@ -20,6 +21,7 @@ with open(filename, 'r') as file:
         # print(data)
         if len(data) == 7:  # Ensure it's a valid data line
             epoch.append(int(data[0]))
+            log_likelihood_test.append(float(data[1]))
             log_likelihood.append(float(data[4]))
             accuracy.append(float(data[2]))
             rmse.append(float(data[3]))
@@ -27,35 +29,41 @@ with open(filename, 'r') as file:
             gd_thp.append(float(data[6]))
 
 # Plotting
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(10, 8))
 
-plt.subplot(5, 1, 1)
+plt.subplot(6, 1, 1)
 plt.plot(epoch, log_likelihood, marker='o', ms=2, linestyle='-')
-plt.title('Log-Likelihood vs Epoch')
+plt.title('Log-Likelihood-Train')
 plt.xlabel('Epoch')
 plt.ylabel('Log-Likelihood')
 
-plt.subplot(5, 1, 2)
+plt.subplot(6, 1, 2)
+plt.plot(epoch, log_likelihood_test, marker='o', ms=2, linestyle='-')
+plt.title('Log-Likelihood-Test')
+plt.xlabel('Epoch')
+plt.ylabel('Log-Likelihood')
+
+plt.subplot(6, 1, 3)
 plt.plot(epoch, accuracy, marker='o', ms=2, linestyle='-')
-plt.title('Accuracy vs Epoch')
+plt.title('Accuracy')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 
-plt.subplot(5, 1, 3)
+plt.subplot(6, 1, 4)
 plt.plot(epoch, rmse, marker='o', ms=2, linestyle='-')
-plt.title('RMSE vs Epoch')
+plt.title('RMSE')
 plt.xlabel('Epoch')
 plt.ylabel('RMSE')
 
-plt.subplot(5, 1, 4)
+plt.subplot(6, 1, 5)
 plt.plot(epoch, gd_masker, marker='o', ms=2, linestyle='-')
-plt.title('Gradient_norm Masker vs Epoch')
+plt.title('Gradient_norm Masker')
 plt.xlabel('Epoch')
 plt.ylabel('Gradient_norm Masker')
 
-plt.subplot(5, 1, 5)
+plt.subplot(6, 1, 6)
 plt.plot(epoch, gd_thp, marker='o', ms=2, linestyle='-')
-plt.title('Gradient_norm THP vs Epoch')
+plt.title('Gradient_norm THP')
 plt.xlabel('Epoch')
 plt.ylabel('Gradient_norm THP')
 

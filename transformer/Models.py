@@ -306,11 +306,14 @@ class Transformer(nn.Module):
         delta_matrix_output = torch.zeros(self.num_types)
         self.num_events = len(event_type[0])
         batch_size = len(event_type)
+        for i in range(batch_size):
+            if len(event_type[i]) > self.num_events:
+                self.num_events = len(event_type[i])
         new_mask = torch.ones(self.num_events, self.num_events)
         new_mask = new_mask.repeat(batch_size, 1, 1)
-        x = torch.normal(10, 0, size=(batch_size, self.n_input))  # noise
+        x = torch.normal(1, 0, size=(batch_size, self.n_input))  # noise
         # if epoch > 20:
-        if epoch > 10:  # the first 0-10 use delay=0
+        if epoch > 20:  # the first 0-n use delay=0
             # for k in range(batch_size):
             #     x = torch.normal(10, 1, size=(1, 32))  # noise
             #     delta_matrix_1d = self.masker(x, event_type, event_time)
@@ -328,10 +331,10 @@ class Transformer(nn.Module):
             delta_matrix = []
             for k in range(batch_size):
                 delta_matrix_zeros = torch.zeros((self.num_types, self.num_types))
-                # if 40 < epoch <= 60 or 80 < epoch <= 100:  # only THP
+                if 40 < epoch <= 60 or 80 < epoch <= 100:  # only THP
                 # if 20 < epoch <= 30 or 40 < epoch <= 50 or 60 < epoch <= 70 or 80 < epoch <= 90:
                 # if 30 < epoch <= 40 or 60 < epoch <= 70 or 90 < epoch <= 100:
-                if 0 < epoch <= 10:  # cannot reach
+                # if 0 < epoch <= 10:  # cannot reach
                     delta_matrix_zeros[-1, :] = delta_matrix_pre  # use previous delay value
                     delta_matrix_output = delta_matrix_pre
                 else:  # THP + Masker

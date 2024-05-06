@@ -5002,11 +5002,11 @@ Max eigenvalue: 0.00000
 ========================================
 ===== generate 5000 sequences using t = 1830.988763809204s =====
 ----- ground truth sparsity pattern -----
-[[0 1 0 1 0]
- [0 0 0 1 0]
- [1 1 0 1 1]
- [0 1 1 1 0]
- [0 1 1 0 1]]
+[[0 0 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]
+ [1 1 1 1 0]]
 ----- ground truth base vector -----
 [[1.  0.5 1.  0.5 0. ]]
 ----- ground truth A matrix -----

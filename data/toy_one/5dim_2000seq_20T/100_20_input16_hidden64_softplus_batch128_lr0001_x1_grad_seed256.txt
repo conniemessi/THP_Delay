@@ -1,0 +1,2 @@
+Namespace(batch_size=32, d_inner_hid=32, d_k=16, d_model=16, d_rnn=8, d_v=16, data='data/toy_one/5dim_2000seq_20T/', device=device(type='cpu'), dropout=0.1, epoch=100, log='data/toy_one/5dim_2000seq_20T/100_20_input16_hidden64_softplus_batch128_lr0001_x1_grad_seed256.txt', lr=0.0001, lr_delay=0.001, n_head=1, n_hidden=64, n_input=16, n_layers=1, num_events=64, smooth=0.1)
+Epoch, Log-likelihood-Test, Accuracy, RMSE, Log-likelihood-Train, Gradient_Masker, Gradient_THP

@@ -137,7 +137,7 @@ def time_loss(prediction, event_time):
 
     true = event_time[:, 1:] - event_time[:, :-1]
     prediction = prediction[:, :-1]
-
+    # print(prediction)
     # event time gap prediction
     diff = prediction - true
     se = torch.sum(diff * diff)
